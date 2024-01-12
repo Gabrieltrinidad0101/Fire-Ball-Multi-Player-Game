@@ -1,12 +1,14 @@
 import { GameObject } from "../object/object";
 
 export class Game {
-    static readonly canvas: HTMLCanvasElement = document.getElementById("game") as HTMLCanvasElement
-    private static readonly context: CanvasRenderingContext2D | undefined | null = Game.canvas?.getContext("2d")
+    static canvas: HTMLCanvasElement = {} as HTMLCanvasElement
+    private static context: CanvasRenderingContext2D | undefined | null = Game.canvas?.getContext("2d")
     static objects: Map<string, GameObject> = new Map<string, GameObject>();
     context(): CanvasRenderingContext2D {
         if (!Game.context) {
-            throw new Error("Canvas not exit")
+            Game.canvas = document.getElementById("game") as HTMLCanvasElement
+            Game.context = Game.canvas?.getContext("2d")
+            if(!Game.context) throw new Error("Canvas not exit")
         }
         return Game.context
     }
@@ -67,6 +69,4 @@ export class Game {
     static deleteObject(id: string) {
         Game.objects.delete(id)
     }
-
-
 }
