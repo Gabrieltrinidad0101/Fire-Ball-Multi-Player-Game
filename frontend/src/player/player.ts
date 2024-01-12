@@ -1,3 +1,4 @@
+import { Server } from "socket.io";
 import { Bullet, TDirrection } from "../bullet/bullet";
 import { Game } from "../game/game";
 import { GameObject,IBaseGameObject, IGameObject } from "../object/object";
@@ -6,16 +7,19 @@ export class Player extends GameObject {
     speed: number = 10
     dirrection: TDirrection = "left"
     sendBullet = true
-    constructor(baseGameObject: IBaseGameObject,canMove: boolean){
+    socket: Server | null = null
+    constructor(socket: Server, baseGameObject: IBaseGameObject,canMove: boolean){
         const gameObject = baseGameObject as IGameObject
         gameObject.type = "player"
         super(gameObject) 
         if(!canMove) return;
+        this.socket = socket
         document.addEventListener("keypress",(e)=>{
-            if(e.key === "d") this.ArrowRight();
-            if(e.key === "a") this.ArrowLeft();
-            if(e.key === "w") this.ArrowUp();
-            if(e.key === "s") this.ArrowDown();
+            if(!["a","s","w","d"].includes(e.key)) return
+            socket.emit("move user",{
+                key: e.key,
+                id: this.id 
+            });
         })
 
         document.addEventListener("keyup",(e)=>{
@@ -29,14 +33,15 @@ export class Player extends GameObject {
             this.sendBullet = true
         },500)
         this.sendBullet = false
-        const bullet = new Bullet(this.id,{
+        this.socket?.emit("send bullet",{
             x: this.x + this.w / 2,
             y: this.y + this.h / 2 - 5,
             w: 10, 
             h: 10,
-            image: "bullet.png"
+            image: "bullet.png",
+            userId: this.id,
+            dirrection: this.dirrection
         })
-        bullet.dirrection = this.dirrection
     }
 
     collision(object: IGameObject): void {
@@ -44,37 +49,33 @@ export class Player extends GameObject {
         if(object.type === "bullet"){
             const bullet =  object as Bullet
             if (bullet.userId === this.id) return
-            Game.deleteObject(this.id)
+            this.socket?.emit("delete object",this.id)
             return
         }
-        if(this.dirrection === "left") this.x += this.speed
-        if(this.dirrection === "rigth") this.x -= this.speed
-        if(this.dirrection === "up") this.y += this.speed
-        if(this.dirrection === "down") this.y -= this.speed
     }
 
-    private ArrowRight = ()=>{
+    right = ()=>{
         this.x += this.speed 
         if(this.x + this.w > Game.canvas.width) this.x = Game.canvas.width - this.w
         this.dirrection = "rigth"
         this.image = "playerRigth.png"
     }
     
-    private ArrowLeft = ()=>{
+    left = ()=>{
         this.x -= this.speed
         if(this.x < 0) this.x = 0
         this.dirrection = "left"
         this.image = "playerLeft.png"
     }
 
-    private ArrowUp = ()=>{
+    up = ()=>{
         this.y -= this.speed
         if(this.y < 0) this.y = 0
         this.dirrection = "up"
         this.image = "playerUp.png"
     }
 
-    private ArrowDown = ()=>{
+    down = ()=>{
         this.y += this.speed
         if(this.y + this.h > Game.canvas.height) this.y = Game.canvas.height - this.h
         this.dirrection = "down"

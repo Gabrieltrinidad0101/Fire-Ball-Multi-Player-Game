@@ -8,11 +8,11 @@ export interface IBaseGameObject {
     w: number,
     h: number,
     image?: string
+    id?: string,
 }
 
 export interface IGameObject extends IBaseGameObject {
     type: TObject,
-    id: string,
 }
 
 export class GameObject{
@@ -21,7 +21,7 @@ export class GameObject{
     w: number = 0
     h: number = 0 
     type: TObject = "object"
-    id: string = crypto.randomUUID()
+    id: string = ""
     image?: string
     
     constructor(gameObject: IGameObject){
@@ -31,6 +31,7 @@ export class GameObject{
         this.h = gameObject.h
         this.type = gameObject.type
         this.image = gameObject.image
+        this.id = gameObject.id ?? crypto.randomUUID()
         Game.objects.set(this.id,this)
     }
 

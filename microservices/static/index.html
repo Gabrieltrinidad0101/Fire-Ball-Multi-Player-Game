@@ -10,14 +10,16 @@
     <h2>Hello World</h2>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.1.1/socket.io.js"></script>
     <script>
-      const socket = io("/socket.io/");
+      const socket = io("http://localhost:5001/socket.io/", { transports : ['websocket'] });
       
       socket.emit("chat message", "hello world!") //emitting the message from 1 client
 
       //all the client reading on that event will get that message once broadcasted
-      socket.on("chat message", (msg) => {
+      socket.on("move user", (msg) => {
         alert("Client side: " + msg)
       })
+
+      socket.emit("move user","ssss");
     </script>
   </body>
 </html>

@@ -12,7 +12,6 @@ class Obstacle extends GameObject {
           y: 0,
           h: 15,
           w: 15,
-          id: "",
           type: "obstacle"
         })
         this.angle = Math.random() * 10 
@@ -32,7 +31,7 @@ class Obstacle extends GameObject {
         if(gameObject.type === "object") {
             Game.deleteObject(this.id);this.imageGif.remove()
         }
-        if(gameObject.type === "player") Game.deleteObject(gameObject.id)
+        if(gameObject.type === "player") Game.deleteObject(gameObject.id ?? "")
         if(gameObject.type !== "obstacle"){
             this.showGif({w: this.w,image: "explosion.gif",timeLife: 500})
         }
