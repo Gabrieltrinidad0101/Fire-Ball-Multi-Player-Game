@@ -16,8 +16,6 @@ export class Bullet extends GameObject{
     deforeRender(){
         if(this.dirrection === "left") this.x -= 30       
         if(this.dirrection === "rigth") this.x += 30
-        if(this.dirrection === "up") this.y -= 30
-        if(this.dirrection === "down")  this.y += 30      
         if(this.isOutSideOfGame())
             Game.deleteObject(this.id)
     }

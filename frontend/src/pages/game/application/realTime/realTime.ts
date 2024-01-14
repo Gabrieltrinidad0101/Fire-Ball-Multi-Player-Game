@@ -8,7 +8,7 @@ export const StartRealTimeGame = ()=>{
     const id = crypto.randomUUID()
     
     socketIO.emit("new user",{x:200,y:100,w: 30,h: 30,image: "playerRigth.png",id})
-    new Player(socketIO,{x:300,y:100,w: 30,h: 30,image: "playerRigth.png",id},true);
+    new Player(socketIO,{x:300,y:Game.canvas.height - 30,w: 30,h: 30,image: "playerRigth.png",id},true);
     
     new GameObject({x:300,y: Game.canvas.height - 60,w: 300,h: 30,image: "square.jpg",type: "object",id: "234455"})
     

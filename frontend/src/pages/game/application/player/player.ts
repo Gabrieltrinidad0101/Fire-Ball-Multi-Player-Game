@@ -5,14 +5,17 @@ import { GameObject,IBaseGameObject, IGameObject } from "../object/object";
 
 export class Player extends GameObject {   
     gravity = 10
-    speed: number = 10
+    speed: number = 15
+    velocity = 10
     dirrection: TDirrection = "up"
     sendBullet = true
     socket: Server | null = null
-    canJump = false
+    
     moves = {
-        left: true,
-        right: true,
+        left: false,
+        right: false,
+        up: false,
+        canJump: false
     }
 
 
@@ -22,16 +25,24 @@ export class Player extends GameObject {
         super(gameObject) 
         if(!canMove) return;
         this.socket = socket
-        document.addEventListener("keypress",(e)=>{
-            if(!["a","w","d"].includes(e.key)) return
-            socket.emit("move user",{
-                key: e.key,
-                id: this.id 
-            });
+        document.addEventListener("keydown",(e)=>{
+            if(e.key == "a") {
+                this.moves.right = false 
+                this.moves.left = true 
+            }
+            if(e.key == "d") {
+                this.moves.right = true 
+                this.moves.left = false
+            }
+            if(e.key === "w") this.moves.up = true
         })
 
         document.addEventListener("keyup",(e)=>{
             if(e.key === "Enter") this.bullet();
+            if(e.key === "a") this.moves.left = false 
+            if(e.key === "d") this.moves.right = false
+            if(e.key === "w") this.moves.up = false
+            this.velocity = 10
         })
     }
 
@@ -54,10 +65,44 @@ export class Player extends GameObject {
 
     deforeRender(): void {
         this.y += this.gravity
+        this.moves.canJump = false
         if(this.y + this.h > Game.canvas.height){
             this.y = Game.canvas.height - this.h
-            this.canJump = true
+            this.moves.canJump = true
         }
+
+        Game.objects.forEach(object =>{
+            if(object.type != "object") return
+            if(object.x <= this.x &&  this.x <= object.x + object.w &&
+               object.y <= this.y + this.h && object.y + object.h >= this.y + this.h
+            ){
+                this.y = object.y - this.w
+                this.moves.canJump = true
+            }
+        })
+
+        if(Game.objects)
+        
+        if(this.moves.left){
+            this.socket?.emit("move user",{
+                key: "a",
+                id: this.id 
+            });
+        }
+        if(this.moves.right){
+            this.socket?.emit("move user",{
+                key: "d",
+                id: this.id 
+            });
+        }
+
+        if(this.moves.up && this.moves.canJump){
+            this.socket?.emit("move user",{
+                key: "w",
+                id: this.id 
+            });
+        }
+
     }
 
     collision(object: IGameObject): void {
@@ -67,11 +112,6 @@ export class Player extends GameObject {
             if (bullet.userId === this.id) return
             this.socket?.emit("delete object",this.id)
             return
-        }
-        if(object.type === "object"){
-            if(this.dirrection === "up") this.y -= this.speed
-            if(this.dirrection === "left") this.x += this.speed
-            if(this.dirrection === "rigth") this.x -= this.speed
         }
     }
 
@@ -90,10 +130,8 @@ export class Player extends GameObject {
     }
 
     up = ()=>{
-        if(!this.canJump) return
-        this.canJump = false
-        this.y -= this.speed * 30
+        if(!this.moves.up) return
+        this.y -= this.w * 3
         if(this.y < 0) this.y = 0
-        this.dirrection = "up"
     }
 }
