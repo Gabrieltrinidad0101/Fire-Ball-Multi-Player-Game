@@ -5,6 +5,7 @@ export default function Home() {
     <Background>
       <div className={HomeCss.container}>
         <div className={HomeCss.card}>
+          <h1 className={HomeCss.title}>Games</h1>
           <div className={HomeCss.plays}>
             {
               Array(50).fill(0).map(_=>
@@ -17,7 +18,25 @@ export default function Home() {
             }
           </div>
         </div>
-        <div className={HomeCss.card}></div>
+        <div className={HomeCss.card}>
+          <div className={HomeCss.containerPlayer}>
+            <h1 className={HomeCss.title}>Users</h1>
+            <div className={HomeCss.containerInput}>
+              <input type="text" />
+            </div>
+            <div className={HomeCss.users}>
+              {
+                Array(50).fill(0).map(_=>
+                  <div>
+                    <img src="https://api.dicebear.com/6.x/initials/svg?seed=peppe" alt="" />
+                    <h1>Name</h1>
+                  </div>
+                  )
+              }
+              
+          </div>
+          </div>
+        </div>
       </div>
     </Background>
   )

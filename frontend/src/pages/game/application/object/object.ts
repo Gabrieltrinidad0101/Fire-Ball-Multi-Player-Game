@@ -24,6 +24,7 @@ export class GameObject{
     id: string = ""
     image?: string
     
+
     constructor(gameObject: IGameObject){
         this.x = gameObject.x
         this.y = gameObject.y
@@ -51,9 +52,9 @@ export class GameObject{
 
     changeGif(image: HTMLImageElement,data: {w:number,image: string,timeLife: number}){
         const center =  data.w > this.w ? ((data.w - this.w) / 2) : 0
-        image.setAttribute("style",`width: ${data.w}px; left: ${this.x - center}px;top: ${this.y - center}px`)
+        const canvasPosition = Game.canvas.getBoundingClientRect()
+        image.setAttribute("style",`width: ${data.w}px; left: ${canvasPosition.left + (this.x - center)}px;top: ${canvasPosition.top + (this.y - center)}px`)
     }
-
     isOutSideOfGame(){
         if(this.x + this.w > Game.canvas.width) return true
         if(this.x < 0) return true

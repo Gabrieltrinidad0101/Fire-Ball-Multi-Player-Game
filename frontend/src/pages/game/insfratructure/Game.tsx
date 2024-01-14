@@ -1,6 +1,7 @@
 import { useEffect } from "react"
 import { StartGame } from "../application/main"
 import "./main.css"
+import Background from "../../../components/Background"
 
 
 export default function Game(): JSX.Element {
@@ -10,8 +11,8 @@ export default function Game(): JSX.Element {
   },[])
 
   return (
-    <div>
-        <canvas width="1000px" height="500px" id="game"></canvas>
-    </div>
+    <Background>
+      <canvas width="1000px" height="500px" id="game"></canvas>
+    </Background>
   )
 }

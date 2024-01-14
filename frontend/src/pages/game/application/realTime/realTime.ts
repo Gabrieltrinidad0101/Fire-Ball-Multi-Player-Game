@@ -1,5 +1,6 @@
 import { Bullet } from "../bullet/bullet";
 import { Game } from "../game/game";
+import { GameObject } from "../object/object";
 import { Player } from "../player/player"
 import {socketIO} from "./parseSocketIO"
 
@@ -7,8 +8,9 @@ export const StartRealTimeGame = ()=>{
     const id = crypto.randomUUID()
     
     socketIO.emit("new user",{x:200,y:100,w: 30,h: 30,image: "playerRigth.png",id})
-    new Player(socketIO,{x:200,y:100,w: 30,h: 30,image: "playerRigth.png",id},true);
+    new Player(socketIO,{x:300,y:100,w: 30,h: 30,image: "playerRigth.png",id},true);
     
+    new GameObject({x:300,y: Game.canvas.height - 60,w: 300,h: 30,image: "square.jpg",type: "object",id: "234455"})
     
     socketIO.on("move user", (data: {key: string,id: string})=>{
         Game.objects.forEach(game=>{
@@ -17,7 +19,6 @@ export const StartRealTimeGame = ()=>{
             if(data.key === "d")  player.right();
             if(data.key === "a") player.left();
             if(data.key === "w") player.up();
-            if(data.key === "s") player.down();
         })          
     })
     

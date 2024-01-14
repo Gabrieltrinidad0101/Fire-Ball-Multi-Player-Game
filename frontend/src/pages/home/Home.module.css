@@ -21,9 +21,29 @@
   box-shadow: 0 15px 35px rgba(0,0,0,9);
 }
 
+.title{
+    color: white;
+
+}
+
+.containerPlayer{
+    height: 100%;
+    display: grid;
+    grid-template-rows: 6% 10% 85%;
+}
+
+.containerInput > input{
+    width: 100%;
+    height: 30px;
+    font-size: 20px;
+    font-weight: 700;
+    padding: 5px;
+    outline: none;
+}
+
 .plays{
     width: 100%;
-    height: 100%;
+    height: 90%;
     display: grid;
     grid-template-columns: repeat(3,1fr);
     grid-template-rows: repeat(auto-fill,50px);
@@ -53,4 +73,18 @@
     width: 10px;
     height: 10px;
     border-radius: 10px;
+}
+
+.users{
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.users > div{
+    display: grid;
+    grid-template-columns: 20% 80%;
+    gap: 10px;
+    color: white;
+    align-items: center;
+    margin-top: 7px;
 }

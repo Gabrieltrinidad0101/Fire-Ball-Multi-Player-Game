@@ -4,8 +4,12 @@
 }
 canvas{
     border: 1px solid #000;
+    z-index: 1000;
+    position: absolute;
+    background: #000;
 }
 
 .gif{
     position: fixed;
+    z-index: 1100;
 }

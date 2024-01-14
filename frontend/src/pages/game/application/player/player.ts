@@ -4,10 +4,18 @@ import { Game } from "../game/game";
 import { GameObject,IBaseGameObject, IGameObject } from "../object/object";
 
 export class Player extends GameObject {   
+    gravity = 10
     speed: number = 10
-    dirrection: TDirrection = "left"
+    dirrection: TDirrection = "up"
     sendBullet = true
     socket: Server | null = null
+    canJump = false
+    moves = {
+        left: true,
+        right: true,
+    }
+
+
     constructor(socket: Server, baseGameObject: IBaseGameObject,canMove: boolean){
         const gameObject = baseGameObject as IGameObject
         gameObject.type = "player"
@@ -15,7 +23,7 @@ export class Player extends GameObject {
         if(!canMove) return;
         this.socket = socket
         document.addEventListener("keypress",(e)=>{
-            if(!["a","s","w","d"].includes(e.key)) return
+            if(!["a","w","d"].includes(e.key)) return
             socket.emit("move user",{
                 key: e.key,
                 id: this.id 
@@ -44,6 +52,14 @@ export class Player extends GameObject {
         })
     }
 
+    deforeRender(): void {
+        this.y += this.gravity
+        if(this.y + this.h > Game.canvas.height){
+            this.y = Game.canvas.height - this.h
+            this.canJump = true
+        }
+    }
+
     collision(object: IGameObject): void {
         if(object.type === "player") return;
         if(object.type === "bullet"){
@@ -51,6 +67,11 @@ export class Player extends GameObject {
             if (bullet.userId === this.id) return
             this.socket?.emit("delete object",this.id)
             return
+        }
+        if(object.type === "object"){
+            if(this.dirrection === "up") this.y -= this.speed
+            if(this.dirrection === "left") this.x += this.speed
+            if(this.dirrection === "rigth") this.x -= this.speed
         }
     }
 
@@ -69,16 +90,10 @@ export class Player extends GameObject {
     }
 
     up = ()=>{
-        this.y -= this.speed
+        if(!this.canJump) return
+        this.canJump = false
+        this.y -= this.speed * 30
         if(this.y < 0) this.y = 0
         this.dirrection = "up"
-        this.image = "playerUp.png"
-    }
-
-    down = ()=>{
-        this.y += this.speed
-        if(this.y + this.h > Game.canvas.height) this.y = Game.canvas.height - this.h
-        this.dirrection = "down"
-        this.image = "playerDown.png"
     }
 }

@@ -14,7 +14,6 @@ export class Bullet extends GameObject{
     dirrection: TDirrection = "left"
 
     deforeRender(){
-        console.log("ok")
         if(this.dirrection === "left") this.x -= 30       
         if(this.dirrection === "rigth") this.x += 30
         if(this.dirrection === "up") this.y -= 30
