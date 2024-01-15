@@ -8,7 +8,8 @@ export const StartGame = async ()=>{
     if(Game.canvas != null) return
     const game = new Game()
     game.context()
-    //spawnear()
     StartRealTimeGame()
-    await game.render(["playerRigth.png","square.jpg","playerLeft.png","playerUp.png","playerDown.png","bullet.png"])
+    game.background = "backgroundBig.png"   
+    spawnear()
+    await game.render(["backgroundBig.png","square.jpg","object.png","bullet.png"])
 }

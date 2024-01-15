@@ -38,6 +38,10 @@ func main() {
 			server.BroadcastTo("mychat", "delete object", data)
 		})
 
+		so.On("stop player", func(data interface{}) {
+			server.BroadcastTo("mychat", "stop player", data)
+		})
+
 	})
 
 	e := echo.New()

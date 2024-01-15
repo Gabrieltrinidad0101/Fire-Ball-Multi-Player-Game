@@ -13,7 +13,7 @@ export class Bullet extends GameObject{
     }
     dirrection: TDirrection = "left"
 
-    deforeRender(){
+    async deforeRender(): Promise<void>{
         if(this.dirrection === "left") this.x -= 30       
         if(this.dirrection === "rigth") this.x += 30
         if(this.isOutSideOfGame())
@@ -23,6 +23,7 @@ export class Bullet extends GameObject{
     collision(object: IGameObject): void {
         if(object.id === this.userId) return
         if(object instanceof Bullet && (object as Bullet).userId === this.userId) return
+        if(object.type == "object") return
         Game.deleteObject(this.id)
         this.showGif({w: this.w,image: "explosion.gif",timeLife: 500})
     }

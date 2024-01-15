@@ -4,14 +4,13 @@ export class Game {
     static canvas: HTMLCanvasElement = document.getElementById("game") as HTMLCanvasElement
     private static context: CanvasRenderingContext2D | undefined | null = Game.canvas?.getContext("2d")
     static objects: Map<string, GameObject> = new Map<string, GameObject>();
+    background: string = ""
     context(): CanvasRenderingContext2D {
         if (!Game.context) {
             Game.canvas = document.getElementById("game") as HTMLCanvasElement
             Game.context = Game.canvas?.getContext("2d")
             if(!Game.context) throw new Error("Canvas not exit")
         }
-
-        console.log(Game.canvas.getBoundingClientRect())
 
         return Game.context
     }
@@ -35,14 +34,27 @@ export class Game {
         while (true) {
             try {
                 Game.context?.clearRect(0,0,Game.canvas.width,Game.canvas.height)
-                Game.context?.fillRect(0,0,Game.canvas.width,Game.canvas.height)
+                if(this.background != ""){
+                    const imageElement = imagesElement.get(this.background)
+                    if(imageElement === undefined) return
+                    Game.context?.drawImage(imageElement,0,0,Game.canvas.width * 2,Game.canvas.height)
+                }
                 for (const keyValueObject of Game.objects) {
                     const object = keyValueObject[1]
                     if (object == null) return
-                    const imageElement = imagesElement.get(object.image ?? "")
                     object.deforeRender()
                     this.collisionDetector()
-                    if(imageElement) Game.context?.drawImage(imageElement, object.x, object.y, object.w, object.h)
+                    //Game.context?.fillRect(object.x, object.y, object.w, object.h)
+                    if(object.image === undefined) return
+                    const imageElement = imagesElement.get(object.image)
+                    const {centerW,centerH} = object.centerPosition(object.imageW ?? object.w,object.imageH ?? object.h)
+                    if(imageElement) Game.context?.drawImage(
+                        imageElement, 
+                        object.x - centerW, 
+                        object.y - centerH, 
+                        (object.imageW ?? object.w), 
+                        (object.imageH ?? object.h)
+                    )
                 }
                 await this.wait(100)
             } catch (error) {

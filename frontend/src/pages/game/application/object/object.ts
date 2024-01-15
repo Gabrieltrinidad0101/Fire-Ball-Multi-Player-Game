@@ -7,6 +7,8 @@ export interface IBaseGameObject {
     y: number,
     w: number,
     h: number,
+    imageW?: number,
+    imageH?: number,
     image?: string
     id?: string,
 }
@@ -16,14 +18,16 @@ export interface IGameObject extends IBaseGameObject {
 }
 
 export class GameObject{
-    x: number = 0
-    y: number = 0
-    w: number = 0
-    h: number = 0 
+    x = 0
+    y = 0
+    w = 0
+    h = 0 
+    imageW: number | undefined = 0
+    imageH: number | undefined = 0
     type: TObject = "object"
     id: string = ""
     image?: string
-    
+    imageGif: HTMLImageElement | null = null
 
     constructor(gameObject: IGameObject){
         this.x = gameObject.x
@@ -32,29 +36,47 @@ export class GameObject{
         this.h = gameObject.h
         this.type = gameObject.type
         this.image = gameObject.image
+        this.imageH = gameObject.imageH
+        this.imageW = gameObject.imageW
         this.id = gameObject.id ?? crypto.randomUUID()
         Game.objects.set(this.id,this)
     }
 
-    showGif(data: {w:number,image: string,timeLife: number}): HTMLImageElement {
-        const image = document.createElement("img")
-        image.src = data.image
-        image.className = "gif"
-        this.changeGif(image,data)
-        document.body.append(image)
+    showGif(data: {w:number,h:number,image: string,timeLife: number,flip?: number}) {
         if(data.timeLife > 0){
             setTimeout(()=>{
-                image.remove()
+                this.imageGif?.remove()
             },data.timeLife)
         }
-        return image
+        if(this.imageGif != null){
+            this.changeGif(data)
+            return
+        }
+        this.imageGif = document.createElement("img")
+        this.imageGif.className = "gif"
+        this.changeGif(data)
+        document.body.append(this.imageGif)
     }
 
-    changeGif(image: HTMLImageElement,data: {w:number,image: string,timeLife: number}){
-        const center =  data.w > this.w ? ((data.w - this.w) / 2) : 0
-        const canvasPosition = Game.canvas.getBoundingClientRect()
-        image.setAttribute("style",`width: ${data.w}px; left: ${canvasPosition.left + (this.x - center)}px;top: ${canvasPosition.top + (this.y - center)}px`)
+    centerPosition(width: number,height : number):{centerW: number,centerH: number}{
+        const centerW =  width > this.w ? ((width - this.w) / 2) : 0
+        const centerH =  height > this.h ? ((height - this.h) / 2) : 0
+        return {centerW,centerH}
     }
+
+    changeGif(data: {w:number,h:number,image: string,timeLife: number,flip?: number}){
+        const {centerW,centerH} = this.centerPosition(data.w,data.h)
+        const canvasPosition = Game.canvas.getBoundingClientRect()
+        if(this.imageGif === null) return
+        if(this.imageGif.src.split("/").at(-1) !== data.image){
+            this.imageGif.src = data.image
+        } 
+        this.imageGif.setAttribute("style",`transform: scaleX(${data.flip});width: ${data.w}px; left: ${canvasPosition.left + (this.x - centerW)}px;top: ${canvasPosition.top + (this.y - centerH)}px`)
+    }
+
+
+
+
     isOutSideOfGame(){
         if(this.x + this.w > Game.canvas.width) return true
         if(this.x < 0) return true
@@ -63,7 +85,7 @@ export class GameObject{
         return false
     }
 
-    deforeRender(){
+    async deforeRender(): Promise<void>{
 
     }
 

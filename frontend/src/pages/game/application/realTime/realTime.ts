@@ -7,33 +7,22 @@ import {socketIO} from "./parseSocketIO"
 export const StartRealTimeGame = ()=>{
     const id = crypto.randomUUID()
     
-    socketIO.emit("new user",{x:200,y:100,w: 30,h: 30,image: "playerRigth.png",id})
-    new Player(socketIO,{x:300,y:Game.canvas.height - 30,w: 30,h: 30,image: "playerRigth.png",id},true);
+    socketIO.emit("new user",{x:300,y:Game.canvas.height - 30,w: 75,h: 75,image: "playerRigth.png",id})
+    new Player(socketIO,{x:300,y:Game.canvas.height - 30,w: 75,h: 75,image: "playerRigth.png",id},true);
     
-    new GameObject({x:300,y: Game.canvas.height - 60,w: 300,h: 30,image: "square.jpg",type: "object",id: "234455"})
+    new GameObject({x:300,y: 100,w: 300,h:30,imageW: 300, imageH: 120,image: "object.png",type: "object"})
+    new GameObject({x:200,y: 200,w: 300,h:30,imageW: 300, imageH: 120,image: "object.png",type: "object"})
+    new GameObject({x:100,y: 300,w: 300,h:30,imageW: 300, imageH: 120,image: "object.png",type: "object"})
     
-    socketIO.on("move user", (data: {key: string,id: string})=>{
+    socketIO.on("move user", (data: {key: string,id: string,x: number,y: number})=>{
         Game.objects.forEach(game=>{
             if(game.id !== data.id) return
             const player = game as Player
-            if(data.key === "d")  player.right();
-            if(data.key === "a") player.left();
-            if(data.key === "w") player.up();
-        })          
+            if(data.key === "d")  player.right(data.x);
+            if(data.key === "a") player.left(data.x);
+            if(data.key === "w") player.up(data.y);
+        })
     })
-    
-    
-    socketIO.on("user collision", (data: {dirrection: string,id: string})=>{
-        Game.objects.forEach(game=>{
-            if(game.id !== data.id) return
-            const player = game as Player
-            if(data.dirrection === "left") player.x += player.speed
-            if(data.dirrection === "rigth") player.x -= player.speed
-            if(data.dirrection === "up") player.y += player.speed
-            if(data.dirrection === "down") player.y -= player.speed
-        })          
-    })
-    
     
     socketIO.on("delete object", (id: string)=>{
         Game.deleteObject(id)        
@@ -47,5 +36,12 @@ export const StartRealTimeGame = ()=>{
     socketIO.on("new user", (data: any)=>{
         if(data.id === id) return
         new Player(socketIO,data,false)
+    })
+
+    socketIO.on("stop player", (data: any)=>{
+        Game.objects.forEach(object =>{
+            if(object.id !== data.id) return
+            (object as Player).showAnimation("player.gif")
+        })
     })
 } 

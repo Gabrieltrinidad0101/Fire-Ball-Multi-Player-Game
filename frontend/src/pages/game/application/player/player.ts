@@ -4,13 +4,12 @@ import { Game } from "../game/game";
 import { GameObject,IBaseGameObject, IGameObject } from "../object/object";
 
 export class Player extends GameObject {   
-    gravity = 10
+    gravity = 5
     speed: number = 15
-    velocity = 10
     dirrection: TDirrection = "up"
     sendBullet = true
     socket: Server | null = null
-    
+    gifAnimation: HTMLImageElement | null= null
     moves = {
         left: false,
         right: false,
@@ -42,15 +41,18 @@ export class Player extends GameObject {
             if(e.key === "a") this.moves.left = false 
             if(e.key === "d") this.moves.right = false
             if(e.key === "w") this.moves.up = false
-            this.velocity = 10
+            this.socket?.emit("stop player",{
+                id: this.id
+            })
         })
+        this.showAnimation("player.gif")
     }
 
     private bullet = ()=>{
         if(!this.sendBullet) return
         setTimeout(()=>{
             this.sendBullet = true
-        },500)
+        },250)
         this.sendBullet = false
         this.socket?.emit("send bullet",{
             x: this.x + this.w / 2,
@@ -63,75 +65,104 @@ export class Player extends GameObject {
         })
     }
 
-    deforeRender(): void {
+    async deforeRender(): Promise<void> {
         this.y += this.gravity
-        this.moves.canJump = false
+
+
         if(this.y + this.h > Game.canvas.height){
             this.y = Game.canvas.height - this.h
+            if(!this.moves.canJump) this.showAnimation("player.gif")
             this.moves.canJump = true
+        }else{
+            Game.objects.forEach(object =>{
+                if(object.type != "object") return
+                if(object.x <= this.x + this.w &&  this.x <= object.x + object.w &&
+                   object.y <= this.y + this.h && object.y + object.h >= this.y + this.h
+                ){
+                    if(!this.moves.canJump) this.showAnimation("player.gif")
+                    this.y = object.y - this.w
+                    this.moves.canJump = true
+                    return
+                }
+                this.moves.canJump = false
+            })
         }
 
-        Game.objects.forEach(object =>{
-            if(object.type != "object") return
-            if(object.x <= this.x &&  this.x <= object.x + object.w &&
-               object.y <= this.y + this.h && object.y + object.h >= this.y + this.h
-            ){
-                this.y = object.y - this.w
-                this.moves.canJump = true
-            }
-        })
-
-        if(Game.objects)
-        
         if(this.moves.left){
             this.socket?.emit("move user",{
+                x: this.x - this.speed,
                 key: "a",
                 id: this.id 
             });
         }
+        
         if(this.moves.right){
-            this.socket?.emit("move user",{
+            this.moveUser({
+                x: this.x + this.speed,
                 key: "d",
-                id: this.id 
-            });
+                y: this.y
+            })
         }
 
         if(this.moves.up && this.moves.canJump){
-            this.socket?.emit("move user",{
+            this.moveUser({
+                x: this.x,
                 key: "w",
-                id: this.id 
-            });
+                y: this.y - this.w * 3,
+            })
+            return
         }
 
-    }
-
-    collision(object: IGameObject): void {
-        if(object.type === "player") return;
-        if(object.type === "bullet"){
-            const bullet =  object as Bullet
-            if (bullet.userId === this.id) return
-            this.socket?.emit("delete object",this.id)
+        if(!this.moves.left && !this.moves.right && !this.moves.canJump){
+            this.showAnimation("playerUp.gif",0)
             return
         }
     }
 
-    right = ()=>{
-        this.x += this.speed 
-        if(this.x + this.w > Game.canvas.width) this.x = Game.canvas.width - this.w
-        this.dirrection = "rigth"
-        this.image = "playerRigth.png"
-    }
-    
-    left = ()=>{
-        this.x -= this.speed
-        if(this.x < 0) this.x = 0
-        this.dirrection = "left"
-        this.image = "playerLeft.png"
+    private moveUser({x,y,key}:{x: number,y: number,key: string}){
+        this.socket?.emit("move user",{
+            x,
+            y,
+            key,
+            id: this.id 
+        });
     }
 
-    up = ()=>{
-        if(!this.moves.up) return
-        this.y -= this.w * 3
+    collision(object: IGameObject): void {
+        if(object.type !== "bullet") return
+        const bullet =  object as Bullet
+        if (bullet.userId === this.id) return
+        this.showAnimation("playerDead.gif",800)
+        this.socket?.emit("delete object",this.id)
+    }
+
+    right = (x: number)=>{
+        this.x = x 
+        if(this.x + this.w > Game.canvas.width) this.x = Game.canvas.width - this.w
+        this.dirrection = "rigth"
+        this.showAnimation("playerRun.gif")
+    }
+    
+    left = (x: number)=>{
+        this.x = x
+        if(this.x < 0) this.x = 0
+        this.dirrection = "left"
+        this.showAnimation("playerRun.gif")
+    }
+
+    up = (y: number)=>{
+        if(!this.moves.canJump) return
+        this.y = y
         if(this.y < 0) this.y = 0
+    }
+    
+    showAnimation(image: string,timeLife = 0){
+        this.showGif({
+            image,
+            w: this.w,
+            h: this.h,
+            timeLife,
+            flip: this.dirrection === "left" ? -1 : 1
+        })
     }
 }

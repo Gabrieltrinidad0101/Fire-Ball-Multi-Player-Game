@@ -4,7 +4,6 @@ import { GameObject, IGameObject } from "../object/object";
 class Obstacle extends GameObject {
     angle: number = 0
     speed: number = 0
-    private imageGif: HTMLImageElement
     private imageType: string
     constructor(){
         super({
@@ -20,30 +19,34 @@ class Obstacle extends GameObject {
         if(this.x < Game.canvas.width / 2) this.angle = -this.angle
 
         this.imageType = this.angle < 0 ? "fireBallRigth.gif" : "fireBallLeft.gif"
-        this.imageGif = this.showGif({
+        this.showGif({
             w: this.w * 2,
             image: this.imageType,
-            timeLife: 0
+            timeLife: 0,
+            h: this.h,
+            flip: 1
         })
     }
 
     collision(gameObject: IGameObject): void {
         if(gameObject.type === "object") {
-            Game.deleteObject(this.id);this.imageGif.remove()
+            Game.deleteObject(this.id);this.imageGif?.remove()
         }
         if(gameObject.type === "player") Game.deleteObject(gameObject.id ?? "")
         if(gameObject.type !== "obstacle"){
-            this.showGif({w: this.w,image: "explosion.gif",timeLife: 500})
+            this.showGif({w: this.w, h: this.h, image: "explosion.gif",timeLife: 500})
         }
     }
 
-    deforeRender(): void {
+    async deforeRender(): Promise<void> {
         this.y += this.speed
         this.x -= this.angle
-        this.changeGif(this.imageGif,{
+        this.showGif({
             w: 80,
             image: this.imageType,
-            timeLife: 0
+            timeLife: 0,
+            h: 80,
+            flip: 1
         })
         if(this.isOutSideOfGame()){
             Game.deleteObject(this.id)
