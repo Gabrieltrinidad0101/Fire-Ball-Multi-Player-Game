@@ -25,6 +25,6 @@ export class Bullet extends GameObject{
         if(object instanceof Bullet && (object as Bullet).userId === this.userId) return
         if(object.type == "object") return
         Game.deleteObject(this.id)
-        this.showGif({w: this.w,image: "explosion.gif",timeLife: 500})
+        this.showGif({h: this.h, w: this.w,image: "explosion.gif",timeLife: 500})
     }
 }

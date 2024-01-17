@@ -27,7 +27,10 @@ export class GameObject{
     type: TObject = "object"
     id: string = ""
     image?: string
+    imageAnimation?: string[]
+    delayFrame: number = 0
     imageGif: HTMLImageElement | null = null
+    flipX: boolean = false
 
     constructor(gameObject: IGameObject){
         this.x = gameObject.x
@@ -38,7 +41,7 @@ export class GameObject{
         this.image = gameObject.image
         this.imageH = gameObject.imageH
         this.imageW = gameObject.imageW
-        this.id = gameObject.id ?? crypto.randomUUID()
+        this.id = gameObject.id ?? Math.random().toString() + Math.random().toString()
         Game.objects.set(this.id,this)
     }
 
@@ -55,7 +58,7 @@ export class GameObject{
         this.imageGif = document.createElement("img")
         this.imageGif.className = "gif"
         this.changeGif(data)
-        document.body.append(this.imageGif)
+        Game.canvasContainer?.appendChild(this.imageGif)
     }
 
     centerPosition(width: number,height : number):{centerW: number,centerH: number}{
@@ -71,11 +74,8 @@ export class GameObject{
         if(this.imageGif.src.split("/").at(-1) !== data.image){
             this.imageGif.src = data.image
         } 
-        this.imageGif.setAttribute("style",`transform: scaleX(${data.flip});width: ${data.w}px; left: ${canvasPosition.left + (this.x - centerW)}px;top: ${canvasPosition.top + (this.y - centerH)}px`)
+        this.imageGif.setAttribute("style",`transform: scaleX(${data.flip});width: ${data.w}px;heigth: ${data.h}px; left: ${canvasPosition.left + (this.x - centerW)}px;top: ${canvasPosition.top + (this.y - centerH)}px`)
     }
-
-
-
 
     isOutSideOfGame(){
         if(this.x + this.w > Game.canvas.width) return true
@@ -85,11 +85,23 @@ export class GameObject{
         return false
     }
 
-    async deforeRender(): Promise<void>{
+    deforeRender(): void{
 
     }
 
     collision(_:IGameObject){
     
+    }
+
+    animation(): void{
+        if(!this.imageAnimation) return
+        let i = 0
+        this.image = this.imageAnimation?.[0]
+        setInterval(()=>{
+            let length = this.imageAnimation?.length ?? -1
+            if(i >=  length) i = 0
+            this.image = this.imageAnimation?.[i]
+            i++
+        },this.delayFrame)
     }
 }

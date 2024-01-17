@@ -2,16 +2,18 @@ import { GameObject } from "../object/object";
 
 export class Game {
     static canvas: HTMLCanvasElement = document.getElementById("game") as HTMLCanvasElement
+    static canvasContainer: HTMLDivElement | null = null
     private static context: CanvasRenderingContext2D | undefined | null = Game.canvas?.getContext("2d")
     static objects: Map<string, GameObject> = new Map<string, GameObject>();
+    static cameraWidth = 500;
     background: string = ""
     context(): CanvasRenderingContext2D {
         if (!Game.context) {
+            Game.canvasContainer = document.querySelector(".canvasContiner")
             Game.canvas = document.getElementById("game") as HTMLCanvasElement
             Game.context = Game.canvas?.getContext("2d")
             if(!Game.context) throw new Error("Canvas not exit")
         }
-
         return Game.context
     }
 
@@ -23,6 +25,19 @@ export class Game {
         img.src = image ?? "";
     })
 
+    private drawImage(ctx: CanvasRenderingContext2D, image: HTMLImageElement, object: GameObject){
+        const {centerW,centerH} = object.centerPosition(object.imageW ?? object.w,object.imageH ?? object.h)
+        ctx.save();  
+        ctx.setTransform(
+            object.flipX ? -1 : 1, 0, 
+            0, 1,   
+            object.x + (object.flipX ? (object.imageW ?? object.w) : 0) - centerW,
+            object.y  -centerH  
+        );
+        ctx.drawImage(image,0,0,(object.imageW ?? object.w), (object.imageH ?? object.h));
+        ctx.restore(); // restore the state as it was when this function was called
+    }
+
     wait = (time: number) => new Promise(res => setInterval(res, time))
 
     async render(imagesPath: Array<string>) {
@@ -33,28 +48,23 @@ export class Game {
 
         while (true) {
             try {
-                Game.context?.clearRect(0,0,Game.canvas.width,Game.canvas.height)
+                if(!Game.context) continue
+                Game.context.clearRect(0,0,Game.canvas.width,Game.canvas.height)
                 if(this.background != ""){
                     const imageElement = imagesElement.get(this.background)
-                    if(imageElement === undefined) return
-                    Game.context?.drawImage(imageElement,0,0,Game.canvas.width * 2,Game.canvas.height)
+                    if(imageElement)
+                        Game.context?.drawImage(imageElement,0,0,Game.canvas.width * 2,Game.canvas.height)
                 }
                 for (const keyValueObject of Game.objects) {
                     const object = keyValueObject[1]
-                    if (object == null) return
+                    if (object == null) continue
                     object.deforeRender()
                     this.collisionDetector()
-                    //Game.context?.fillRect(object.x, object.y, object.w, object.h)
-                    if(object.image === undefined) return
+                    Game.context?.fillRect(object.x, object.y, object.w, object.h)
+                    if(object.image === undefined){continue}
                     const imageElement = imagesElement.get(object.image)
-                    const {centerW,centerH} = object.centerPosition(object.imageW ?? object.w,object.imageH ?? object.h)
-                    if(imageElement) Game.context?.drawImage(
-                        imageElement, 
-                        object.x - centerW, 
-                        object.y - centerH, 
-                        (object.imageW ?? object.w), 
-                        (object.imageH ?? object.h)
-                    )
+                    if(imageElement ===  undefined) continue
+                    this.drawImage(Game.context,imageElement,object)
                 }
                 await this.wait(100)
             } catch (error) {

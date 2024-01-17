@@ -17,11 +17,13 @@ export class Player extends GameObject {
         canJump: false
     }
 
-
     constructor(socket: Server, baseGameObject: IBaseGameObject,canMove: boolean){
         const gameObject = baseGameObject as IGameObject
         gameObject.type = "player"
         super(gameObject) 
+        this.showPlayerAnimation("player",4)
+        this.delayFrame = 250
+        this.animation()
         if(!canMove) return;
         this.socket = socket
         document.addEventListener("keydown",(e)=>{
@@ -37,7 +39,10 @@ export class Player extends GameObject {
         })
 
         document.addEventListener("keyup",(e)=>{
-            if(e.key === "Enter") this.bullet();
+            if(e.key === "Enter"){
+                this.bullet();
+                return
+            } 
             if(e.key === "a") this.moves.left = false 
             if(e.key === "d") this.moves.right = false
             if(e.key === "w") this.moves.up = false
@@ -45,14 +50,13 @@ export class Player extends GameObject {
                 id: this.id
             })
         })
-        this.showAnimation("player.gif")
     }
 
     private bullet = ()=>{
         if(!this.sendBullet) return
         setTimeout(()=>{
             this.sendBullet = true
-        },250)
+        },400)
         this.sendBullet = false
         this.socket?.emit("send bullet",{
             x: this.x + this.w / 2,
@@ -68,25 +72,28 @@ export class Player extends GameObject {
     async deforeRender(): Promise<void> {
         this.y += this.gravity
 
+        let canJump = false
 
         if(this.y + this.h > Game.canvas.height){
             this.y = Game.canvas.height - this.h
-            if(!this.moves.canJump) this.showAnimation("player.gif")
-            this.moves.canJump = true
+            if(!this.moves.canJump) {
+                this.showPlayerAnimation("player",4)
+            }
+            canJump = true
         }else{
             Game.objects.forEach(object =>{
                 if(object.type != "object") return
                 if(object.x <= this.x + this.w &&  this.x <= object.x + object.w &&
                    object.y <= this.y + this.h && object.y + object.h >= this.y + this.h
                 ){
-                    if(!this.moves.canJump) this.showAnimation("player.gif")
-                    this.y = object.y - this.w
-                    this.moves.canJump = true
+                    if(!this.moves.canJump) this.showPlayerAnimation("player",4)
+                    this.y = object.y - this.h
+                    canJump = true
                     return
                 }
-                this.moves.canJump = false
             })
         }
+        this.moves.canJump = canJump
 
         if(this.moves.left){
             this.socket?.emit("move user",{
@@ -108,13 +115,13 @@ export class Player extends GameObject {
             this.moveUser({
                 x: this.x,
                 key: "w",
-                y: this.y - this.w * 3,
+                y: this.y - this.h * 3,
             })
             return
         }
 
         if(!this.moves.left && !this.moves.right && !this.moves.canJump){
-            this.showAnimation("playerUp.gif",0)
+            this.showPlayerAnimation("playerUp",4)
             return
         }
     }
@@ -129,25 +136,36 @@ export class Player extends GameObject {
     }
 
     collision(object: IGameObject): void {
+        if(object.type === "obstacle"){
+            this.showPlayerAnimation("playerDead",7)
+            setTimeout(()=>{
+                this.socket?.emit("delete object",this.id)    
+            },800)            
+            return
+        }
         if(object.type !== "bullet") return
         const bullet =  object as Bullet
         if (bullet.userId === this.id) return
-        this.showAnimation("playerDead.gif",800)
-        this.socket?.emit("delete object",this.id)
+        this.showPlayerAnimation("playerDead",7)
+        setTimeout(()=>{
+            this.socket?.emit("delete object",this.id)
+        },800)
     }
 
-    right = (x: number)=>{
+    right = (x: number,playerId: string)=>{
         this.x = x 
         if(this.x + this.w > Game.canvas.width) this.x = Game.canvas.width - this.w
         this.dirrection = "rigth"
-        this.showAnimation("playerRun.gif")
+        this.showPlayerAnimation("playerRun",5)
+        this.camera(playerId)
     }
     
-    left = (x: number)=>{
+    left = (x: number,playerId: string)=>{
         this.x = x
         if(this.x < 0) this.x = 0
         this.dirrection = "left"
-        this.showAnimation("playerRun.gif")
+        this.showPlayerAnimation("playerRun",5)
+        this.camera(playerId)
     }
 
     up = (y: number)=>{
@@ -155,14 +173,22 @@ export class Player extends GameObject {
         this.y = y
         if(this.y < 0) this.y = 0
     }
-    
-    showAnimation(image: string,timeLife = 0){
-        this.showGif({
-            image,
-            w: this.w,
-            h: this.h,
-            timeLife,
-            flip: this.dirrection === "left" ? -1 : 1
-        })
+   
+    showPlayerAnimation(animation: string,frames: number): void {
+        const animationImages = []
+        for(let i = 1; i <= frames; i++){
+            animationImages.push(`./${animation}/player${i}.gif`) 
+        }
+        this.flipX = this.dirrection === "left" ? true : false
+        this.imageAnimation = animationImages
+    }
+
+    camera(playerId: string){
+        if(playerId !== this.id || Game.canvasContainer === null)  return
+        const dirrection = this.dirrection === "left" ? -1 : 1
+        const padding = 10
+        if(this.x <= Game.cameraWidth || 
+           this.x >= Game.canvas.width - (Game.canvasContainer.clientWidth - Game.cameraWidth + padding)) return
+        Game.canvasContainer.scrollLeft += dirrection * this.speed / 2 
     }
 }

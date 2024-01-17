@@ -1,5 +1,5 @@
 import { Game } from "../game/game";
-import { GameObject, IGameObject } from "../object/object";
+import { GameObject } from "../object/object";
 
 class Obstacle extends GameObject {
     angle: number = 0
@@ -16,7 +16,7 @@ class Obstacle extends GameObject {
         this.angle = Math.random() * 10 
         this.speed = Math.random() + 1
         this.x = this.w * 2 + (Math.random() * (Game.canvas.width - this.w * 2))
-        if(this.x < Game.canvas.width / 2) this.angle = -this.angle
+        if(this.x < 1000 / 2) this.angle = -this.angle
 
         this.imageType = this.angle < 0 ? "fireBallRigth.gif" : "fireBallLeft.gif"
         this.showGif({
@@ -26,16 +26,6 @@ class Obstacle extends GameObject {
             h: this.h,
             flip: 1
         })
-    }
-
-    collision(gameObject: IGameObject): void {
-        if(gameObject.type === "object") {
-            Game.deleteObject(this.id);this.imageGif?.remove()
-        }
-        if(gameObject.type === "player") Game.deleteObject(gameObject.id ?? "")
-        if(gameObject.type !== "obstacle"){
-            this.showGif({w: this.w, h: this.h, image: "explosion.gif",timeLife: 500})
-        }
     }
 
     async deforeRender(): Promise<void> {
@@ -52,11 +42,19 @@ class Obstacle extends GameObject {
             Game.deleteObject(this.id)
             this.imageGif?.remove()
         }
+        //hidden fireball when is outside of the game
+        if(Game.canvasContainer === null || !this.imageGif) return
+        if(this.x < Game.canvasContainer.scrollLeft ||
+           this.x + this.w > Game.canvasContainer.scrollLeft + Game.canvasContainer.clientWidth){
+            this.imageGif.classList.add("d-none")
+            return
+           }
+        this.imageGif.classList.remove("d-none")
     }
 }
     
 export function spawnear(){
     setInterval(()=>{
         new Obstacle()
-    },2000)
+    },5000)
 }

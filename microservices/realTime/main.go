@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	socketio "github.com/googollee/go-socket.io"
@@ -48,6 +49,7 @@ func main() {
 	e.HideBanner = true
 	e.Use(middleware.CORS())
 	e.Any("/socket.io/", func(context echo.Context) error {
+		fmt.Print()
 		server.ServeHTTP(context.Response(), context.Request())
 		return nil
 	})
