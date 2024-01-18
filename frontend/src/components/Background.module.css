@@ -55,6 +55,8 @@
   position: relative;
   display: block;
   width: calc(6.25vw - 2px);
+  min-width: 50px;
+  min-height: 50px;
   height: calc(6.25vw - 2px);
   background: #181818;
   z-index: 2;

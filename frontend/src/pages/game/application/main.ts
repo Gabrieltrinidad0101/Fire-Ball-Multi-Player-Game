@@ -10,10 +10,9 @@ export const StartGame = async ()=>{
     game.context()
     StartRealTimeGame()
     game.background = "backgroundBig.png"   
-    //spawnear()
+    spawnear()
     await game.render([
         "backgroundBig.png",
-        "square.jpg",
         "./player/player1.gif",
         "./player/player2.gif",
         "./player/player3.gif",
@@ -34,6 +33,11 @@ export const StartGame = async ()=>{
         "./playerDead/player5.gif",
         "./playerDead/player6.gif",
         "./playerDead/player7.gif",
+        "./fireball/fireball1.gif",
+        "./fireball/fireball2.gif",
+        "./fireball/fireball3.gif",
+        "./fireball/fireball4.gif",
+        "./fireball/fireball5.gif",
         "object.png",
         "bullet.png"])
 }

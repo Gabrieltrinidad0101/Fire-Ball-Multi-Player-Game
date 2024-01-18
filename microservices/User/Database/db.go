@@ -9,8 +9,7 @@ import (
 )
 
 func GetConnection() *gorm.DB {
-	conf := utils.Configuration{}
-	conf.LoadEnviroments()
+	conf := utils.LoadEnviroments()
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		conf.DbUser,
 		conf.DbPassword,

@@ -60,8 +60,7 @@ export class Game {
                     if (object == null) continue
                     object.deforeRender()
                     this.collisionDetector()
-                    Game.context?.fillRect(object.x, object.y, object.w, object.h)
-                    if(object.image === undefined){continue}
+                    if(object.image === undefined) continue
                     const imageElement = imagesElement.get(object.image)
                     if(imageElement ===  undefined) continue
                     this.drawImage(Game.context,imageElement,object)

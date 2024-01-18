@@ -16,6 +16,7 @@ export class Player extends GameObject {
         up: false,
         canJump: false
     }
+    isDead = false
 
     constructor(socket: Server, baseGameObject: IBaseGameObject,canMove: boolean){
         const gameObject = baseGameObject as IGameObject
@@ -27,6 +28,7 @@ export class Player extends GameObject {
         if(!canMove) return;
         this.socket = socket
         document.addEventListener("keydown",(e)=>{
+            if(this.isDead) return 
             if(e.key == "a") {
                 this.moves.right = false 
                 this.moves.left = true 
@@ -39,6 +41,7 @@ export class Player extends GameObject {
         })
 
         document.addEventListener("keyup",(e)=>{
+            if(this.isDead) return 
             if(e.key === "Enter"){
                 this.bullet();
                 return
@@ -138,6 +141,7 @@ export class Player extends GameObject {
     collision(object: IGameObject): void {
         if(object.type === "obstacle"){
             this.showPlayerAnimation("playerDead",7)
+            this.isDead = true
             setTimeout(()=>{
                 this.socket?.emit("delete object",this.id)    
             },800)            
@@ -146,6 +150,7 @@ export class Player extends GameObject {
         if(object.type !== "bullet") return
         const bullet =  object as Bullet
         if (bullet.userId === this.id) return
+        this.isDead = true
         this.showPlayerAnimation("playerDead",7)
         setTimeout(()=>{
             this.socket?.emit("delete object",this.id)
@@ -179,7 +184,7 @@ export class Player extends GameObject {
         for(let i = 1; i <= frames; i++){
             animationImages.push(`./${animation}/player${i}.gif`) 
         }
-        this.flipX = this.dirrection === "left" ? true : false
+        this.flipX = this.dirrection === "left"
         this.imageAnimation = animationImages
     }
 
@@ -188,7 +193,7 @@ export class Player extends GameObject {
         const dirrection = this.dirrection === "left" ? -1 : 1
         const padding = 10
         if(this.x <= Game.cameraWidth || 
-           this.x >= Game.canvas.width - (Game.canvasContainer.clientWidth - Game.cameraWidth + padding)) return
-        Game.canvasContainer.scrollLeft += dirrection * this.speed / 2 
+           this.x >= Game.canvas.width - (Game.canvasContainer.clientWidth - Game.cameraWidth - padding)) return
+        Game.canvasContainer.scrollLeft += dirrection * this.speed
     }
 }

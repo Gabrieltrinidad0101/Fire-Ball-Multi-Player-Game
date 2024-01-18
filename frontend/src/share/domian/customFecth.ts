@@ -1,6 +1,10 @@
-import type IHttpResult from '../../../../share/domain/httpResult'
 import type BaseHttp from '../../share/domian/baseHttp'
 import type IToast from './IToast'
+
+interface IHttpResult<T>{
+  error?: T
+  message?: T
+}
 
 export default interface ICustomFecth {
   post: <T>(url: string, body: object, headers?: object) => Promise<IHttpResult<T> | undefined>

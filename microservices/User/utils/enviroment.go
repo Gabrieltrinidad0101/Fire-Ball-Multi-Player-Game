@@ -18,10 +18,11 @@ type Configuration struct {
 	DbHost     string
 }
 
-func (c *Configuration) LoadEnviroments() *Configuration {
+func LoadEnviroments() *Configuration {
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
 	}
+	var c = &Configuration{}
 	c.DbName = os.Getenv("DB_NAME")
 	c.DbPassword = os.Getenv("DB_PASSWORD")
 	port, err := strconv.Atoi(os.Getenv("DB_PORT"))

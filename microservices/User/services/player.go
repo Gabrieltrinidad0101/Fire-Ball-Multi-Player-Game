@@ -1,33 +1,35 @@
 package services
 
-import "github.com/go-playground/validator/v10"
+import (
+	"github.com/go-playground/validator/v10"
+)
 
 type PlayerModel interface {
-	Insert(Player)
-	Find(Player) Player
+	Insert(*Player)
+	Find(*Player) Player
 	FindByGame(string) []Player
 	FindAll() []Player
 }
 
 type Token interface {
-	createToken(Player) (string, error)
-	verifyToken(token string) (string, error)
+	CreateToken(Player) (string, error)
 }
 
 type Player struct {
 	Name     string `json:"name",validate:"required"`
 	Password string `json:"password"validate:"required"`
+	Id       int
 	GameId   int
 }
 
-func NewPlayer(playerModel PlayerModel) ServicePlayer {
+func NewPlayer(playerModel PlayerModel, token Token) ServicePlayer {
 	return ServicePlayer{
 		PlayerModel: playerModel,
+		Token:       token,
 	}
 }
 
 type ServicePlayer struct {
-	Player
 	PlayerModel
 	Token
 }
@@ -39,15 +41,21 @@ type Response struct {
 
 var validate = validator.New()
 
-func (u *ServicePlayer) Login(Player *Player) Response {
-	if err := validate.Struct(Player); err != nil {
+func (u *ServicePlayer) Login(player *Player) Response {
+	if err := validate.Struct(player); err != nil {
 		return Response{
 			StatusCode: 402,
 			Message:    "Name or Password  are incorrect",
 		}
 	}
-	playerExist := u.Find(u.Player)
-	token, error := u.createToken(playerExist)
+	playerExist := u.Find(player)
+	if playerExist.Name == "" {
+		return Response{
+			StatusCode: 402,
+			Message:    "Name or Password  are incorrect",
+		}
+	}
+	token, error := u.CreateToken(playerExist)
 
 	if error != nil {
 		return Response{
@@ -63,23 +71,24 @@ func (u *ServicePlayer) Login(Player *Player) Response {
 
 }
 
-func (u *ServicePlayer) Register(Player *Player) Response {
-	if err := validate.Struct(Player); err != nil {
+func (u *ServicePlayer) Register(player *Player) Response {
+	if err := validate.Struct(player); err != nil {
 		return Response{
 			StatusCode: 402,
 			Message:    "Name or Password  are incorrect",
 		}
 	}
-	playerExist := u.Find(u.Player)
-
-	if playerExist.Name == "" {
+	playerExist := u.Find(player)
+	if playerExist.Name != "" {
 		return Response{
 			StatusCode: 402,
-			Message:    "Name or Password  are incorrect",
+			Message:    "The user exist",
 		}
 	}
 
-	token, error := u.createToken(playerExist)
+	u.Insert(player)
+
+	token, error := u.CreateToken(playerExist)
 	if error != nil {
 		return Response{
 			Message:    "Error generating the access token please try later",

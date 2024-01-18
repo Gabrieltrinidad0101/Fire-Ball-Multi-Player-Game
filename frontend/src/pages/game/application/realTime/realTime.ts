@@ -19,6 +19,7 @@ export const StartRealTimeGame = ()=>{
         Game.objects.forEach(game=>{
             if(game.id !== data.id) return
             const player = game as Player
+            if(player.isDead) return
             if(data.key === "d")  player.right(data.x,data.id);
             if(data.key === "a") player.left(data.x,data.id);
             if(data.key === "w") player.up(data.y);

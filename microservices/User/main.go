@@ -1,7 +1,15 @@
 package main
 
-import "github.com/labstack/echo/v4"
+import (
+	database "user/Database"
+	"user/router"
+
+	"github.com/labstack/echo/v4"
+)
 
 func main() {
-	echo.New()
+	database.InitMigration()
+	server := echo.New()
+	router.Init(server)
+	server.Start(":8080")
 }

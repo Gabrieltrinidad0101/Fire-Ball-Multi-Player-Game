@@ -23,7 +23,6 @@ export class Bullet extends GameObject{
     collision(object: IGameObject): void {
         if(object.id === this.userId) return
         if(object instanceof Bullet && (object as Bullet).userId === this.userId) return
-        if(object.type == "object") return
         Game.deleteObject(this.id)
         this.showGif({h: this.h, w: this.w,image: "explosion.gif",timeLife: 500})
     }

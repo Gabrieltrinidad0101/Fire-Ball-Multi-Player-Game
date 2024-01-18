@@ -9,13 +9,13 @@ type PlayerModel struct{}
 
 var db = database.GetConnection()
 
-func (u PlayerModel) Find(playerToSearch services.Player) services.Player {
+func (u PlayerModel) Find(playerToSearch *services.Player) services.Player {
 	var player services.Player
-	db.Model(&player).Where("name = ? and password = ?", playerToSearch.Name, playerToSearch.Password)
+	db.First(&player).Where("name = ? and password = ?", playerToSearch.Name, playerToSearch.Password)
 	return player
 }
 
-func (u PlayerModel) Insert(player services.Player) {
+func (u PlayerModel) Insert(player *services.Player) {
 	db.Create(player)
 }
 
