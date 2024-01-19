@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Router, Routes } from "react-router-dom"
+import { BrowserRouter, Route, Routes } from "react-router-dom"
 import Auth from "./pages/auth/insfranstructure/Auth"
 import Home from "./pages/home/insfranstructure/Home.tsx"
 import Game from "./pages/game/insfratructure/Game"

@@ -21,25 +21,35 @@
   box-shadow: 0 15px 35px rgba(0,0,0,9);
 }
 
+.cardHeader{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
 .title{
     color: white;
-
 }
+
+.newGame {
+    cursor: pointer;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    padding: 10px;
+    font-weight: 900;
+    font-size: 20px;
+    background: #0f0;
+}
+
+
 
 .containerPlayer{
     height: 100%;
     display: grid;
-    grid-template-rows: 6% 10% 85%;
+    grid-template-rows: 5% 95%;
 }
 
-.containerInput > input{
-    width: 100%;
-    height: 30px;
-    font-size: 20px;
-    font-weight: 700;
-    padding: 5px;
-    outline: none;
-}
 
 .plays{
     width: 100%;

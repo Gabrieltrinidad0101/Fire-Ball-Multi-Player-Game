@@ -21,8 +21,11 @@ export default function Home() {
     <Background>
       <div className={HomeCss.container}>
         <div className={HomeCss.card}>
-          <h1 className={HomeCss.title}>Games</h1>
-          {/* <div className={HomeCss.plays}>
+          <div className={HomeCss.cardHeader}>
+            <h1 className={HomeCss.title}>Games</h1>
+            <button className={HomeCss.newGame}>New Game</button>
+          </div>
+          <div className={HomeCss.plays}>
             {
               Array(50).fill(0).map(_=>
               <div className={HomeCss.play}>
@@ -32,14 +35,11 @@ export default function Home() {
               </div>
                 )
             }
-          </div> */}
+          </div>
         </div>
         <div className={HomeCss.card}>
           <div className={HomeCss.containerPlayer}>
-            <h1 className={HomeCss.title}>Users</h1>
-            <div className={HomeCss.containerInput}>
-              <input type="text" />
-            </div>
+            <h1 className={HomeCss.title}>Players</h1>
             <div className={HomeCss.users}>
               {
                 players.map(player=>
