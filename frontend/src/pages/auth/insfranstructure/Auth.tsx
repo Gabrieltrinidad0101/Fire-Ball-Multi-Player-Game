@@ -3,9 +3,9 @@ import Background from '../../../components/Background'
 import AuthCss from './Auth.module.css'
 import IUser from '../../../share/domian/user'
 import { Authentication } from '../application/auth'
-import { Toast, customFecth } from '../../../share/infranstruture/dependencies'
-import {  useNavigate } from 'react-router-dom'
-export default function Auth() {
+import { Toast, customFecth } from '../../../share/insfranstructure/dependencies'
+import {  Link, useNavigate } from 'react-router-dom'
+export default function Auth({auth}: {auth: boolean}) {
   const [user,setUser] = useState<IUser>({name: "",password: "",id: 0})
   const navigate = useNavigate()
   const onChange = (e: ChangeEvent<HTMLInputElement>)=>{
@@ -19,7 +19,8 @@ export default function Auth() {
 
   const onClick = (e: React.MouseEvent<HTMLInputElement>)=>{
     e.preventDefault()
-    Authentication(user,customFecth,Toast, redirect)
+    console.log(user)
+    Authentication(user,customFecth,Toast,auth, redirect)
   }
 
   return (
@@ -32,15 +33,16 @@ export default function Auth() {
             </div>
             <div className={AuthCss.form}>
               <div className={AuthCss.inputBox}>
-                <input type="text" name="username" required onChange={onChange} /> <i>Username</i>
+                <input type="text" name="name" required onChange={onChange} /> <i>Username</i>
               </div>
               <div className={AuthCss.inputBox}>
-                <input type="password" required /> <i>Password</i>
+                <input type="password" name='password' required onChange={onChange} /> <i>Password</i>
               </div>
-              <div className={AuthCss.links}> <a href="#">Signup</a>
+              <div className={AuthCss.links}>
+                <Link to={auth ? "/Register" : "/Login"} >{auth ? "Register" : "Login"}</Link>
               </div>
               <div className={AuthCss.inputBox}>
-                <input type="submit" value="Login" onClick={onClick} />
+                <input type="submit" value={!auth ? "Register" : "Login"} onClick={onClick} />
               </div>
             </div>
           </div>

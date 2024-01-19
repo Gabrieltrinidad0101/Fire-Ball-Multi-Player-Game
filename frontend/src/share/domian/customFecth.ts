@@ -18,7 +18,6 @@ export default interface ICustomFecth {
 export interface IOptionsFetch {
   showLoader?: boolean
   showErrors?: boolean
-  removeDefaultHeaders?: boolean
 }
 
 export interface IFecthAlert {

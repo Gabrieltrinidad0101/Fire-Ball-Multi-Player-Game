@@ -59,10 +59,10 @@ class CustomFecth {
   async baseHttp<T>(baseHttp: BaseHttp): Promise<T | undefined> {
     const loaderAnimation = new LoaderAnimation()
     try {
-      const token = localStorage.getItem('token')
-      const { removeDefaultHeaders, showLoader } = baseHttp.optionsFetch ?? {}
-      if (removeDefaultHeaders !== true) baseHttp.headers = { ...baseHttp.headers, token }
-      if (showLoader !== false) loaderAnimation.showAfter(500)
+      const token = localStorage.getItem('x-token')
+      const { showLoader } = baseHttp.optionsFetch ?? {}
+      baseHttp.headers = { ...baseHttp.headers,["x-token"]: token}
+      if (!showLoader) loaderAnimation.showAfter(500)
       const result = await this.customFecth.request(baseHttp)
       loaderAnimation.hide()
       return result.data as T

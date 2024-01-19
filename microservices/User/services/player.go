@@ -18,8 +18,8 @@ type Token interface {
 type Player struct {
 	Name     string `json:"name",validate:"required"`
 	Password string `json:"password"validate:"required"`
-	Id       int
-	GameId   int
+	Id       int    `json:"id"`
+	GameId   int    `json:"gameId"`
 }
 
 func NewPlayer(playerModel PlayerModel, token Token) ServicePlayer {
@@ -75,7 +75,7 @@ func (u *ServicePlayer) Register(player *Player) Response {
 	if err := validate.Struct(player); err != nil {
 		return Response{
 			StatusCode: 402,
-			Message:    "Name or Password  are incorrect",
+			Message:    "Name and Password are requires",
 		}
 	}
 	playerExist := u.Find(player)
@@ -98,7 +98,7 @@ func (u *ServicePlayer) Register(player *Player) Response {
 
 	return Response{
 		Message:    token,
-		StatusCode: 500,
+		StatusCode: 200,
 	}
 
 }

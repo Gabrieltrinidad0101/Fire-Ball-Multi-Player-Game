@@ -1,13 +1,12 @@
 package middleware
 
 import (
-	"fmt"
 	"net/http"
 	"user/services"
 	"user/utils"
 
 	"github.com/dgrijalva/jwt-go"
-	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo"
 )
 
 func Auth(next echo.HandlerFunc) echo.HandlerFunc {
@@ -26,8 +25,6 @@ func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 		token, err := jwt.ParseWithClaims(tokenString, &utils.PlayerJwt{}, func(t *jwt.Token) (interface{}, error) {
 			return utils.GetJwtSecret(), nil
 		})
-
-		fmt.Print(err)
 
 		if err != nil {
 			return ctx.JSON(errorResponse.StatusCode, errorResponse.Message)

@@ -11,7 +11,7 @@ var db = database.GetConnection()
 
 func (u PlayerModel) Find(playerToSearch *services.Player) services.Player {
 	var player services.Player
-	db.First(&player).Where("name = ? and password = ?", playerToSearch.Name, playerToSearch.Password)
+	db.Model(&player).Where("name = ? and password = ?", playerToSearch.Name, playerToSearch.Password)
 	return player
 }
 
