@@ -27,13 +27,6 @@ export default function Home() {
           </div>
           <div className={HomeCss.plays}>
             {
-              Array(50).fill(0).map(_=>
-              <div className={HomeCss.play}>
-                <h2>26666366646464</h2>
-                <div className={HomeCss.isActive}>
-                </div>
-              </div>
-                )
             }
           </div>
         </div>

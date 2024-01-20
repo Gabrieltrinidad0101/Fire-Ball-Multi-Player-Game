@@ -1,6 +1,8 @@
 package services
 
 import (
+	"strconv"
+
 	"github.com/google/uuid"
 )
 
@@ -35,7 +37,15 @@ func NewGame() {
 
 }
 
-func (g *ServiceGame) New(playerId int) Response {
+func (g *ServiceGame) New(playerIdString string) Response {
+	playerId, err := strconv.Atoi(playerIdString)
+	if err != nil {
+		res := Response{
+			StatusCode: 401,
+			Message:    "Error in the playerID",
+		}
+		return res
+	}
 	game := g.findByPlayerId(playerId)
 	if game.id > 0 {
 		return Response{
@@ -45,7 +55,7 @@ func (g *ServiceGame) New(playerId int) Response {
 	}
 	newGame := Game{}
 	newGame.playerId = playerId
-	newGame.uuid = uuid.New()
+	newGame.uuid = uuid.NewString()
 	newGame.status = "loddy"
 	g.insert(newGame)
 	return Response{
@@ -54,7 +64,15 @@ func (g *ServiceGame) New(playerId int) Response {
 	}
 }
 
-func (g *ServiceGame) Start(playerId int) Response {
+func (g *ServiceGame) Start(playerIdString string) Response {
+	playerId, err := strconv.Atoi(playerIdString)
+	if err != nil {
+		res := Response{
+			StatusCode: 401,
+			Message:    "Error in the playerID",
+		}
+		return res
+	}
 	game := g.findByPlayerId(playerId)
 	game.status = "started"
 	g.update(game)
@@ -64,7 +82,15 @@ func (g *ServiceGame) Start(playerId int) Response {
 	}
 }
 
-func (g *ServiceGame) NewPlayer(playerId int) Response {
+func (g *ServiceGame) NewPlayer(playerIdString string) Response {
+	playerId, err := strconv.Atoi(playerIdString)
+	if err != nil {
+		res := Response{
+			StatusCode: 401,
+			Message:    "Error in the playerID",
+		}
+		return res
+	}
 	game := g.findByPlayerId(playerId)
 	canConnect := game.status == "started"
 
