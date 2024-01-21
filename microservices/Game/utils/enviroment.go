@@ -10,14 +10,13 @@ import (
 )
 
 type Configuration struct {
-	JwtSecret                string
-	DbName                   string
-	DbPort                   int32
-	DbUser                   string
-	DbPassword               string
-	DbHost                   string
-	MicroserviceGame         string
-	MicroserviceGamePassword string
+	DbName            string
+	DbPort            int32
+	DbUser            string
+	DbPassword        string
+	DbHost            string
+	PlayerUrl         string
+	TokenMicroservice string
 }
 
 func LoadEnviroments() *Configuration {
@@ -33,6 +32,7 @@ func LoadEnviroments() *Configuration {
 	}
 	c.DbPort = int32(port)
 	c.DbUser = os.Getenv("DB_USER")
-	c.JwtSecret = os.Getenv("JWT_SECRET")
+	c.PlayerUrl = os.Getenv("PLAYER_URL")
+	c.TokenMicroservice = os.Getenv("TOKEN_MICROSERVICE")
 	return c
 }

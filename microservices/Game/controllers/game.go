@@ -7,23 +7,32 @@ import (
 )
 
 type GameController struct {
-	services.ServiceGame
+	serviceGame *services.ServiceGame
 }
 
-func (g *GameController) New(ctx echo.Context) {
-	playerIdString := ctx.Param("playerId")
-	response := g.ServiceGame.New(playerIdString)
-	ctx.JSON(response.StatusCode, response)
+func NewGameController(serviceGame *services.ServiceGame) *GameController {
+	return &GameController{
+		serviceGame,
+	}
 }
 
-func (g *GameController) Start(ctx echo.Context) {
+func (g *GameController) New(ctx echo.Context) error {
 	playerIdString := ctx.Param("playerId")
-	response := g.ServiceGame.Start(playerIdString)
+	response := g.serviceGame.New(playerIdString)
 	ctx.JSON(response.StatusCode, response)
+	return nil
 }
 
-func (g *GameController) NewPlayer(ctx echo.Context) {
+func (g *GameController) Start(ctx echo.Context) error {
 	playerIdString := ctx.Param("playerId")
-	response := g.ServiceGame.Start(playerIdString)
+	response := g.serviceGame.Start(playerIdString)
 	ctx.JSON(response.StatusCode, response)
+	return nil
+}
+
+func (g *GameController) NewPlayer(ctx echo.Context) error {
+	playerIdString := ctx.Param("playerId")
+	response := g.serviceGame.Start(playerIdString)
+	ctx.JSON(response.StatusCode, response)
+	return nil
 }

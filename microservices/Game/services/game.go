@@ -14,13 +14,13 @@ type Game struct {
 }
 
 type ApiPlayer interface {
-	setGame(gameId int)
+	SetGame(gameId int)
 }
 
 type ModelGame interface {
-	insert(Game)
-	findByPlayerId(int) Game
-	update(Game)
+	Insert(Game)
+	FindByPlayerId(int) Game
+	Update(Game)
 }
 
 type Response struct {
@@ -29,12 +29,15 @@ type Response struct {
 }
 
 type ServiceGame struct {
-	ModelGame
+	modelGame ModelGame
 	apiPlayer ApiPlayer
 }
 
-func NewGame() {
-
+func NewGame(modelGame ModelGame, apiPlayer ApiPlayer) *ServiceGame {
+	return &ServiceGame{
+		modelGame,
+		apiPlayer,
+	}
 }
 
 func (g *ServiceGame) New(playerIdString string) Response {
@@ -46,7 +49,7 @@ func (g *ServiceGame) New(playerIdString string) Response {
 		}
 		return res
 	}
-	game := g.findByPlayerId(playerId)
+	game := g.modelGame.FindByPlayerId(playerId)
 	if game.id > 0 {
 		return Response{
 			StatusCode: 200,
@@ -57,7 +60,7 @@ func (g *ServiceGame) New(playerIdString string) Response {
 	newGame.playerId = playerId
 	newGame.uuid = uuid.NewString()
 	newGame.status = "loddy"
-	g.insert(newGame)
+	g.modelGame.Insert(newGame)
 	return Response{
 		StatusCode: 200,
 		Message:    newGame,
@@ -73,9 +76,9 @@ func (g *ServiceGame) Start(playerIdString string) Response {
 		}
 		return res
 	}
-	game := g.findByPlayerId(playerId)
+	game := g.modelGame.FindByPlayerId(playerId)
 	game.status = "started"
-	g.update(game)
+	g.modelGame.Update(game)
 	return Response{
 		StatusCode: 200,
 		Message:    game,
@@ -91,11 +94,11 @@ func (g *ServiceGame) NewPlayer(playerIdString string) Response {
 		}
 		return res
 	}
-	game := g.findByPlayerId(playerId)
+	game := g.modelGame.FindByPlayerId(playerId)
 	canConnect := game.status == "started"
 
 	if canConnect {
-		g.apiPlayer.setGame(game.id)
+		g.apiPlayer.SetGame(game.id)
 	}
 
 	return Response{
