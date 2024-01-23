@@ -1,11 +1,27 @@
 package model
 
-import "realTime/services"
+import (
+	"realTime/database"
+	"realTime/services"
+)
 
 type ModelGame struct{}
 
-func (m ModelGame) Insert(services.Game) {}
-func (m ModelGame) FindByPlayerId(int) services.Game {
-	return services.Game{}
+var db = database.GetConnection()
+
+func (m ModelGame) Insert(game *services.Game) {
+	db.Create(game)
 }
-func (m ModelGame) Update(services.Game) {}
+func (m ModelGame) FindById(id uint) *services.Game {
+	var game services.Game
+	db.Model(&game).Where("id = ?", id)
+	return &game
+}
+func (m ModelGame) FindByPlayerId(playerId int) *services.Game {
+	var game services.Game
+	db.Model(&game).Where("player_id = ?", playerId)
+	return &game
+}
+func (m ModelGame) Update(game *services.Game) {
+	db.Updates(game)
+}

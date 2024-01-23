@@ -4,23 +4,24 @@ import (
 	"strconv"
 
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type Game struct {
-	id       int
-	uuid     string
-	playerId int
-	status   string
+	gorm.Model
+	Uuid     string `json:"uuid"`
+	PlayerId int    `json:"playerId"`
+	Status   string `json:"status"`
 }
 
 type ApiPlayer interface {
-	SetGame(gameId int)
+	SetGame(gameId uint)
 }
 
 type ModelGame interface {
-	Insert(Game)
-	FindByPlayerId(int) Game
-	Update(Game)
+	Insert(*Game)
+	FindByPlayerId(int) *Game
+	Update(*Game)
 }
 
 type Response struct {
@@ -45,21 +46,21 @@ func (g *ServiceGame) New(playerIdString string) Response {
 	if err != nil {
 		res := Response{
 			StatusCode: 401,
-			Message:    "Error in the playerID",
+			Message:    err,
 		}
 		return res
 	}
 	game := g.modelGame.FindByPlayerId(playerId)
-	if game.id > 0 {
+	if game.ID > 0 {
 		return Response{
 			StatusCode: 200,
-			Message:    game.id,
+			Message:    game,
 		}
 	}
-	newGame := Game{}
-	newGame.playerId = playerId
-	newGame.uuid = uuid.NewString()
-	newGame.status = "loddy"
+	newGame := &Game{}
+	newGame.PlayerId = playerId
+	newGame.Uuid = uuid.NewString()
+	newGame.Status = "loddy"
 	g.modelGame.Insert(newGame)
 	return Response{
 		StatusCode: 200,
@@ -77,7 +78,7 @@ func (g *ServiceGame) Start(playerIdString string) Response {
 		return res
 	}
 	game := g.modelGame.FindByPlayerId(playerId)
-	game.status = "started"
+	game.Status = "started"
 	g.modelGame.Update(game)
 	return Response{
 		StatusCode: 200,
@@ -95,10 +96,10 @@ func (g *ServiceGame) NewPlayer(playerIdString string) Response {
 		return res
 	}
 	game := g.modelGame.FindByPlayerId(playerId)
-	canConnect := game.status == "started"
+	canConnect := game.Status == "started"
 
 	if canConnect {
-		g.apiPlayer.SetGame(game.id)
+		g.apiPlayer.SetGame(game.ID)
 	}
 
 	return Response{

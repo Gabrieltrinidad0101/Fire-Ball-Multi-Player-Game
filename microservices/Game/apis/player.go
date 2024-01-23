@@ -9,7 +9,7 @@ import (
 
 type ApisPlayer struct{}
 
-func (a ApisPlayer) SetGame(gameId int) {
+func (a ApisPlayer) SetGame(gameId uint) {
 	configuration := utils.LoadEnviroments()
 	request, err := http.NewRequest("GET", configuration.PlayerUrl, nil)
 	if err != nil {
