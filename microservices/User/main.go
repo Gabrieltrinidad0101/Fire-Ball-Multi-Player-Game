@@ -16,5 +16,5 @@ func main() {
 	server := echo.New()
 	server.Use(middleware.CORS())
 	router.Init(server)
-	server.Start(":/")
+	server.Start(":8000")
 }
