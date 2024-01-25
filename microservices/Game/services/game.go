@@ -46,7 +46,7 @@ func NewGame(modelGame ModelGame, apiPlayer ApiPlayer) *ServiceGame {
 	}
 }
 
-func (g *ServiceGame) New(player Player) Response {
+func (g *ServiceGame) New(player *Player) Response {
 	game := g.modelGame.FindByPlayerId(player.Id)
 	if game.ID > 0 {
 		return Response{
@@ -65,7 +65,7 @@ func (g *ServiceGame) New(player Player) Response {
 	}
 }
 
-func (g *ServiceGame) Start(player Player) Response {
+func (g *ServiceGame) Start(player *Player) Response {
 	game := g.modelGame.FindByPlayerId(player.Id)
 	game.Status = "started"
 	g.modelGame.Update(game)
@@ -75,7 +75,7 @@ func (g *ServiceGame) Start(player Player) Response {
 	}
 }
 
-func (g *ServiceGame) NewPlayer(player Player) Response {
+func (g *ServiceGame) NewPlayer(player *Player) Response {
 	game := g.modelGame.FindByPlayerId(player.Id)
 	canConnect := game.Status == "started"
 

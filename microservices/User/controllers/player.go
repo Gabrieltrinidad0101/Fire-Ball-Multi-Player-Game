@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"user/services"
+	"user/utils"
 
 	"github.com/labstack/echo"
 )
@@ -46,11 +47,14 @@ func (p *PlayerController) FindAllPlayersController(ctx echo.Context) error {
 }
 
 func (p *PlayerController) GetDataFromUser(ctx echo.Context) error {
-	player := ctx.Request().Context().Value("user").(services.Player)
+	player := ctx.Get("player").(*utils.PlayerJwt)
 	response := services.Response{
 		StatusCode: 200,
-		Message:    player,
+		Message: services.Player{
+			Name: player.Name,
+			Id:   player.Player.Id,
+		},
 	}
-	ctx.JSON(response.StatusCode, response)
+	ctx.JSON(response.StatusCode, response.Message)
 	return nil
 }

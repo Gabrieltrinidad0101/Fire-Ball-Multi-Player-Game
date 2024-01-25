@@ -12,14 +12,14 @@ var db = database.GetConnection()
 func (m ModelGame) Insert(game *services.Game) {
 	db.Create(game)
 }
-func (m ModelGame) FindById(id uint) *services.Game {
+func (m ModelGame) FindByUuid(uuid string) *services.Game {
 	var game services.Game
-	db.Model(&game).Where("id = ?", id)
+	db.Where("uuid = ?", uuid).First(&game)
 	return &game
 }
 func (m ModelGame) FindByPlayerId(playerId int) *services.Game {
 	var game services.Game
-	db.Model(&game).Where("player_id = ?", playerId)
+	db.Where("player_id = ?", playerId).First(&game)
 	return &game
 }
 func (m ModelGame) Update(game *services.Game) {

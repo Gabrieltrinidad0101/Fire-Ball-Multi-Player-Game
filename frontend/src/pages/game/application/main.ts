@@ -2,17 +2,16 @@ import { spawnear } from "./Obstacle/obstacle";
 import { Game } from "./game/game";
 import {StartRealTimeGame}  from "./realTime/realTime";
 
-//Only run one time
-export const StartGame = async ()=>{
+export const StartGame = async (gameId: string)=>{
     if(document.getElementById("game") == undefined) return
     if(Game.canvas != null) return
     const game = new Game()
     game.context()
-    StartRealTimeGame()
+    StartRealTimeGame(gameId)
     game.background = "backgroundBig.png"   
     spawnear()
     await game.render([
-        "backgroundBig.png",
+        "./backgroundBig.png",
         "./player/player1.gif",
         "./player/player2.gif",
         "./player/player3.gif",

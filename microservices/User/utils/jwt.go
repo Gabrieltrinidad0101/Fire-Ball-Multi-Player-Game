@@ -8,7 +8,7 @@ import (
 )
 
 type PlayerJwt struct {
-	services.Player
+	*services.Player
 	jwt.StandardClaims
 }
 
@@ -20,12 +20,9 @@ func GetJwtSecret() []byte {
 type JsonWebToken struct{}
 
 // createToken implements services.Token.
-func (JsonWebToken) CreateToken(player services.Player) (string, error) {
+func (JsonWebToken) CreateToken(player *services.Player) (string, error) {
 	userJwt := &PlayerJwt{
-		Player: services.Player{
-			Name: player.Name,
-			Id:   player.Id,
-		},
+		Player: player,
 		StandardClaims: jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Hour * 72).Unix(),
 		},

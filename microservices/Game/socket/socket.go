@@ -4,14 +4,13 @@ import (
 	"log"
 	"net/http"
 	"realTime/services"
-	"strconv"
 
 	socketio "github.com/googollee/go-socket.io"
 	"github.com/labstack/echo"
 )
 
 type GameModel interface {
-	FindById(uint) *services.Game
+	FindByUuid(string) *services.Game
 }
 
 type PlayerApi interface {
@@ -30,17 +29,33 @@ func NewSocketServer(gameModel GameModel, playerApi PlayerApi) *SocketServer {
 	}
 }
 
-func (s *SocketServer) RealTimeServer() (func(context echo.Context) error, error) {
+var playersByGame = map[string][]interface{}{}
+
+func (s *SocketServer) RealTimeServer(context echo.Context) error {
+	gameUuid := context.QueryParam("gameUuid")
+	game := s.gameModel.FindByUuid(gameUuid)
+	if game.ID <= 0 {
+		return context.JSON(http.StatusUnauthorized, map[string]string{
+			"Error": "Invalid token",
+		})
+	}
+	//s.playerApi.SetGame(game.ID)
+	context.Set("gameId", gameUuid)
+	s.serverSocket(gameUuid, context.Response(), context.Request())
+	return nil
+}
+
+func (s *SocketServer) serverSocket(gameIdString string, w http.ResponseWriter, r *http.Request) {
 	server, err := socketio.NewServer(nil)
 	if err != nil {
 		log.Fatal("error establishing new socketio server")
-		return nil, err
+		return
 	}
 
 	server.On("connection", func(so socketio.Socket) {
-		gameIdString := so.Request().Context().Value("gameId").(string)
 
 		so.Join(gameIdString)
+
 		so.On("move user", func(data interface{}) {
 			server.BroadcastTo(gameIdString, "move user", data)
 		})
@@ -50,6 +65,7 @@ func (s *SocketServer) RealTimeServer() (func(context echo.Context) error, error
 		})
 
 		so.On("new user", func(data interface{}) {
+			playersByGame[gameIdString] = append(playersByGame[gameIdString], data)
 			so.BroadcastTo(gameIdString, "new user", data)
 		})
 
@@ -64,24 +80,12 @@ func (s *SocketServer) RealTimeServer() (func(context echo.Context) error, error
 		so.On("stop player", func(data interface{}) {
 			server.BroadcastTo(gameIdString, "stop player", data)
 		})
+
+		players := playersByGame[gameIdString]
+		for _, player := range players {
+			so.Emit("new user", player)
+		}
 	})
-	return func(context echo.Context) error {
-		gameIdString := context.QueryParam("gameId")
-		gameId, err := strconv.Atoi(gameIdString)
-		if err != nil {
-			return context.JSON(http.StatusUnauthorized, map[string]string{
-				"Error": "Invalid token",
-			})
-		}
-		game := s.gameModel.FindById(uint(gameId))
-		if game.ID <= 0 {
-			return context.JSON(http.StatusUnauthorized, map[string]string{
-				"Error": "Invalid token",
-			})
-		}
-		s.playerApi.SetGame(uint(gameId))
-		context.Set("gameId", gameIdString)
-		server.ServeHTTP(context.Response(), context.Request())
-		return nil
-	}, nil
+
+	server.ServeHTTP(w, r)
 }

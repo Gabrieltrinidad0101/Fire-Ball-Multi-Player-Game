@@ -4,16 +4,23 @@ import HomeCss from './Home.module.css'
 import IUser from '../../../share/domian/user'
 import { homeApp } from './dependencies'
 import IGame from '../../../share/domian/game'
+import { useNavigate } from 'react-router-dom'
 export default function Home() {
   const [players, setPlayers] = useState<Array<IUser>>([])
   const [games, setGames] = useState<Array<IGame>>([])
-
+  const navigation = useNavigate()
   const getUsers = async () => {
     setPlayers(await homeApp.getPlayers())
   }
 
   const getGames = async () => {
     setGames(await homeApp.getGames())
+  }
+
+  const newGame = ()=>{
+    homeApp.newGame((gameUuid: string)=>{
+      navigation(`/Game/${gameUuid}`)
+    })
   }
 
   useEffect(() => {
@@ -36,7 +43,7 @@ export default function Home() {
         <div className={HomeCss.card}>
           <div className={HomeCss.cardHeader}>
             <h1 className={HomeCss.title}>Games</h1>
-            <button className={HomeCss.newGame}>New Game</button>
+            <button onClick={newGame} className={HomeCss.newGame}>New Game</button>
           </div>
           <div className={HomeCss.plays}>
             {

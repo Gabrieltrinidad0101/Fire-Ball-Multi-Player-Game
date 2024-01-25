@@ -14,7 +14,7 @@ function App() {
           <Route path="/Login" element={<Auth auth={true} />}></Route>
           <Route path="/Register" element={<Auth auth={false}/>}></Route>
           <Route path="/Home" element={<Home />}></Route>
-          <Route path="/Game" element={<Game />}></Route>
+          <Route path="/Game/:gameId" element={<Game />}></Route>
         </Routes>
         <ToastContainer />
         <Loading/>

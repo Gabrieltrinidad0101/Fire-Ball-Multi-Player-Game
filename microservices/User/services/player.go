@@ -12,13 +12,13 @@ type PlayerModel interface {
 }
 
 type Token interface {
-	CreateToken(Player) (string, error)
+	CreateToken(*Player) (string, error)
 }
 
 type Player struct {
 	Name     string `json:"name",validate:"required"`
 	Password string `json:"password"validate:"required"`
-	Id       int    `json:"id"`
+	Id       uint   `json:"id"`
 	GameId   int    `json:"gameId"`
 }
 
@@ -55,7 +55,8 @@ func (u *ServicePlayer) Login(player *Player) Response {
 			Message:    "Name or Password  are incorrect",
 		}
 	}
-	token, error := u.CreateToken(playerExist)
+	player.Id = playerExist.Id
+	token, error := u.CreateToken(player)
 
 	if error != nil {
 		return Response{
@@ -66,7 +67,7 @@ func (u *ServicePlayer) Login(player *Player) Response {
 
 	return Response{
 		Message:    token,
-		StatusCode: 500,
+		StatusCode: 200,
 	}
 
 }
@@ -88,7 +89,7 @@ func (u *ServicePlayer) Register(player *Player) Response {
 
 	u.Insert(player)
 
-	token, error := u.CreateToken(playerExist)
+	token, error := u.CreateToken(player)
 	if error != nil {
 		return Response{
 			Message:    "Error generating the access token please try later",

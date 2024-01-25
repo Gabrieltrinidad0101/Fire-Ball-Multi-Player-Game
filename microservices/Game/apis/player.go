@@ -37,13 +37,15 @@ func (a ApisPlayer) SetGame(gameId uint) {
 func (a ApisPlayer) GetData(tokenPlayer string) (*services.Player, error) {
 	configuration := utils.LoadEnviroments()
 
-	request, err := http.NewRequest("GET", configuration.PlayerUrl, nil)
+	url := fmt.Sprintf("%s/player/getData", configuration.PlayerUrl)
+	request, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		fmt.Println("Error creating GET request:", err)
 		return nil, err
 	}
 	request.Header.Set("x-token", tokenPlayer)
-	response, err := http.Get(configuration.PlayerUrl)
+	client := http.Client{}
+	response, err := client.Do(request)
 	if err != nil {
 		fmt.Println("Error making GET request:", err)
 		return nil, err

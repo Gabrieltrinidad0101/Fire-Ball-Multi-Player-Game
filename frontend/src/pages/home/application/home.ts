@@ -1,5 +1,5 @@
 import APIURL from "../../../share/application/Api";
-import { isNullEmptyUndefinerOrNan } from "../../../share/application/isNullEmptyUndifinedOrNan";
+import { isNullEmptyUndefinedOrNan } from "../../../share/application/isNullEmptyUndifinedOrNan";
 import ICustomFecth from "../../../share/domian/customFecth";
 import IGame from "../../../share/domian/game";
 import IUser from "../../../share/domian/user";
@@ -17,12 +17,12 @@ export class HomeApp{
         return response?.message ?? []
     }
 
-    newGame = async (): Promise<IGame>=>{
+    newGame = async (redirect: (gameUUid: string)=>void): Promise<void>=>{
         const response = await this.customFetch.post<IGame>("game",APIURL.newGame,{})
-        if (response?.message == undefined || isNullEmptyUndefinerOrNan(response?.message)){
-
+        if (response?.message == undefined || isNullEmptyUndefinedOrNan(response?.message)){
+            return         
         }
-        return response?.message ?? []
+        redirect(response.message.uuid)
     }
 
     

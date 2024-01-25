@@ -3,9 +3,9 @@ import { Game } from "../game/game";
 import { GameObject } from "../object/object";
 import { Player } from "../player/player"
 import {socketIO} from "./parseSocketIO"
-export const StartRealTimeGame = ()=>{
+export const StartRealTimeGame = (gameId: string)=>{
     const id = Math.random().toString() + Math.random().toString()
-    const socket = socketIO()
+    const socket = socketIO(gameId)
     socket.emit("new user",{x:300,y:Game.canvas.height - 60,w: 35,h: 75,imageW: 75, image: "playerRigth.png",id})
     new Player(socket,{x:300,y:Game.canvas.height - 60,w: 35,h: 75,imageW: 75, image: "playerRigth.png",id},true);
     

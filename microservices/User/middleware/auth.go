@@ -41,8 +41,8 @@ func userAuth(ctx echo.Context, next echo.HandlerFunc) error {
 		return ctx.JSON(errorResponse.StatusCode, errorResponse.Message)
 	}
 
-	if _, ok := token.Claims.(*utils.PlayerJwt); ok && token.Valid {
-		ctx.Set("user", token)
+	if player, ok := token.Claims.(*utils.PlayerJwt); ok && token.Valid {
+		ctx.Set("player", player)
 		return next(ctx)
 	}
 
