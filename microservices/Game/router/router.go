@@ -2,9 +2,9 @@ package router
 
 import (
 	"realTime/conf"
+	"realTime/middleware"
 
 	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 )
 
 func Init(e *echo.Echo) {
@@ -16,12 +16,11 @@ func Init(e *echo.Echo) {
 		panic(err)
 	}
 	e.HideBanner = true
-	e.Use(middleware.CORS())
 	e.GET("/socket.io/", socketController)
 
 	game := e.Group("/game")
-	game.GET("/findAll", gameController.FindAll)
-	game.POST("/new", gameController.New)
-	game.POST("/start", gameController.Start)
-	game.POST("/newplayer", gameController.NewPlayer)
+	game.GET("/findAll", gameController.FindAll, middleware.Auth)
+	game.POST("/new", gameController.New, middleware.Auth)
+	game.POST("/start", gameController.Start, middleware.Auth)
+	game.POST("/newplayer", gameController.NewPlayer, middleware.Auth)
 }

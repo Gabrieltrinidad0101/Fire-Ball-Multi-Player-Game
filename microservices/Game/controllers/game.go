@@ -17,22 +17,22 @@ func NewGameController(serviceGame *services.ServiceGame) *GameController {
 }
 
 func (g *GameController) New(ctx echo.Context) error {
-	playerIdString := ctx.QueryParam("playerId")
-	response := g.serviceGame.New(playerIdString)
+	player := ctx.Request().Context().Value("user").(services.Player)
+	response := g.serviceGame.New(player)
 	ctx.JSON(response.StatusCode, response)
 	return nil
 }
 
 func (g *GameController) Start(ctx echo.Context) error {
-	playerIdString := ctx.QueryParam("playerId")
-	response := g.serviceGame.Start(playerIdString)
+	player := ctx.Request().Context().Value("user").(services.Player)
+	response := g.serviceGame.Start(player)
 	ctx.JSON(response.StatusCode, response)
 	return nil
 }
 
 func (g *GameController) NewPlayer(ctx echo.Context) error {
-	playerIdString := ctx.QueryParam("playerId")
-	response := g.serviceGame.Start(playerIdString)
+	player := ctx.Request().Context().Value("user").(services.Player)
+	response := g.serviceGame.Start(player)
 	ctx.JSON(response.StatusCode, response)
 	return nil
 }

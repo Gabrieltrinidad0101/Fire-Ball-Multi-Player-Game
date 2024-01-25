@@ -13,7 +13,7 @@ export default interface ICustomFecth {
   put: <T>(microservice: keyof TMicroservice,url: string, body?: object, headers?: object) => Promise<IHttpResult<T> | undefined>
   delete: <T>(microservice: keyof TMicroservice,url: string, headers?: object) => Promise<IHttpResult<T> | undefined>
   patch: <T>(microservice: keyof TMicroservice,url: string, body?: object, headers?: object) => Promise<IHttpResult<T> | undefined>
-  baseHttp: <T>(microservice: keyof TMicroservice,baseHttp: BaseHttp) => Promise<IHttpResult<T> | undefined>
+  baseHttp: <T>(baseHttp: BaseHttp) => Promise<IHttpResult<T> | undefined>
 }
 
 export interface IOptionsFetch {

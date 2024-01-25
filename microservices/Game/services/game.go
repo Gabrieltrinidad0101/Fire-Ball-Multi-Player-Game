@@ -1,8 +1,6 @@
 package services
 
 import (
-	"strconv"
-
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -10,7 +8,7 @@ import (
 type Game struct {
 	gorm.Model
 	Uuid     string `json:"uuid"`
-	PlayerId int    `json:"playerId"`
+	PlayerId int    `json:"player.Id"`
 	Status   string `json:"status"`
 }
 
@@ -21,7 +19,7 @@ type Player struct {
 
 type ApiPlayer interface {
 	SetGame(gameId uint)
-	GetData(tokenPlayer string) *Player
+	GetData(tokenPlayer string) (*Player, error)
 }
 
 type ModelGame interface {
@@ -48,16 +46,8 @@ func NewGame(modelGame ModelGame, apiPlayer ApiPlayer) *ServiceGame {
 	}
 }
 
-func (g *ServiceGame) New(playerIdString string) Response {
-	playerId, err := strconv.Atoi(playerIdString)
-	if err != nil {
-		res := Response{
-			StatusCode: 401,
-			Message:    err,
-		}
-		return res
-	}
-	game := g.modelGame.FindByPlayerId(playerId)
+func (g *ServiceGame) New(player Player) Response {
+	game := g.modelGame.FindByPlayerId(player.Id)
 	if game.ID > 0 {
 		return Response{
 			StatusCode: 200,
@@ -65,7 +55,7 @@ func (g *ServiceGame) New(playerIdString string) Response {
 		}
 	}
 	newGame := &Game{}
-	newGame.PlayerId = playerId
+	newGame.PlayerId = player.Id
 	newGame.Uuid = uuid.NewString()
 	newGame.Status = "loddy"
 	g.modelGame.Insert(newGame)
@@ -75,16 +65,8 @@ func (g *ServiceGame) New(playerIdString string) Response {
 	}
 }
 
-func (g *ServiceGame) Start(playerIdString string) Response {
-	playerId, err := strconv.Atoi(playerIdString)
-	if err != nil {
-		res := Response{
-			StatusCode: 401,
-			Message:    "Error in the playerID",
-		}
-		return res
-	}
-	game := g.modelGame.FindByPlayerId(playerId)
+func (g *ServiceGame) Start(player Player) Response {
+	game := g.modelGame.FindByPlayerId(player.Id)
 	game.Status = "started"
 	g.modelGame.Update(game)
 	return Response{
@@ -93,16 +75,8 @@ func (g *ServiceGame) Start(playerIdString string) Response {
 	}
 }
 
-func (g *ServiceGame) NewPlayer(playerIdString string) Response {
-	playerId, err := strconv.Atoi(playerIdString)
-	if err != nil {
-		res := Response{
-			StatusCode: 401,
-			Message:    "Error in the playerID",
-		}
-		return res
-	}
-	game := g.modelGame.FindByPlayerId(playerId)
+func (g *ServiceGame) NewPlayer(player Player) Response {
+	game := g.modelGame.FindByPlayerId(player.Id)
 	canConnect := game.Status == "started"
 
 	if canConnect {

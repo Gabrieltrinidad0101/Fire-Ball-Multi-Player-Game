@@ -15,4 +15,5 @@ func Init(e *echo.Echo) {
 	user.POST("/register", playerController.RegisterController)
 	user.GET("/playersByGame", playerController.PlayersByGameController, middleware.Auth)
 	user.GET("/findAll", playerController.FindAllPlayersController, middleware.Auth)
+	user.GET("/getData", playerController.GetDataFromUser, middleware.Auth)
 }

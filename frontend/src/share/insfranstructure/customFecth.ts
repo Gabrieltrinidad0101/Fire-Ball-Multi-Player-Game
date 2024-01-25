@@ -6,7 +6,7 @@ import LoaderAnimation from './loaderAnimation'
 import { constants } from '../application/constants'
 import { TMicroservice } from '../domian/baseHttp'
 
-export class CustomFecth {
+export class CustomFecth  {
   private readonly errorMsg: string = 'Internal error try later'
   
   private readonly microservices = new Map<keyof TMicroservice,AxiosInstance>([
