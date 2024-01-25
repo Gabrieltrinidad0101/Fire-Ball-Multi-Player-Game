@@ -5,6 +5,7 @@ import (
 	"realTime/controllers"
 	"realTime/model"
 	"realTime/services"
+	"realTime/socket"
 )
 
 func Init() *Conf {
@@ -19,4 +20,8 @@ func (c *Conf) game() *services.ServiceGame {
 
 func (c *Conf) GameController() *controllers.GameController {
 	return controllers.NewGameController(c.game())
+}
+
+func (c *Conf) SocketController() *socket.SocketServer {
+	return socket.NewSocketServer(model.ModelGame{}, apis.ApisPlayer{})
 }

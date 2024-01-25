@@ -33,14 +33,24 @@ func (p *PlayerController) RegisterController(ctx echo.Context) error {
 }
 
 func (p *PlayerController) PlayersByGameController(ctx echo.Context) error {
-	id := ctx.Param("id")
-	response := p.PlayersByGame(id)
+	idGame := ctx.Param("idGame")
+	response := p.PlayersByGame(idGame)
 	ctx.JSON(response.StatusCode, response)
 	return nil
 }
 
 func (p *PlayerController) FindAllPlayersController(ctx echo.Context) error {
 	response := p.FindAllPlayers()
+	ctx.JSON(response.StatusCode, response)
+	return nil
+}
+
+func (p *PlayerController) GetDataFromUser(ctx echo.Context) error {
+	player := ctx.Request().Context().Value("user").(services.Player)
+	response := services.Response{
+		StatusCode: 200,
+		Message:    player,
+	}
 	ctx.JSON(response.StatusCode, response)
 	return nil
 }

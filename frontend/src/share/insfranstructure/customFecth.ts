@@ -1,15 +1,23 @@
-import axios, { AxiosError } from 'axios'
+import axios, { AxiosError, AxiosInstance } from 'axios'
 import type BaseHttp from '../domian/baseHttp'
-import { Toast, serverUrl } from './dependencies'
+import { Toast} from './dependencies'
 import { type IOptionsFetch } from '../domian/customFecth'
 import LoaderAnimation from './loaderAnimation'
-class CustomFecth {
-  private readonly customFecth = axios.create({
-    baseURL: serverUrl
-  })
+import { constants } from '../application/constants'
+import { TMicroservice } from '../domian/baseHttp'
 
-  async post<T>(url: string, data: object, headers?: object | undefined): Promise<T | undefined> {
+export class CustomFecth {
+  private readonly errorMsg: string = 'Internal error try later'
+  
+  private readonly microservices = new Map<keyof TMicroservice,AxiosInstance>([
+    ["user",axios.create({baseURL: constants.serverUrlUser})],
+    ["game",axios.create({baseURL: constants.serverUrlGame})]
+  ])
+
+
+  async post<T>(microservice: keyof TMicroservice, url: string, data: object, headers?: object | undefined): Promise<T | undefined> {
     return await this.baseHttp<T>({
+      microservice,
       url,
       data,
       headers,
@@ -17,8 +25,9 @@ class CustomFecth {
     })
   }
 
-  async get<T>(url: string, headers?: object | undefined, optionsFetch?: IOptionsFetch): Promise<T | undefined> {
+  async get<T>(microservice: keyof TMicroservice, url: string, headers?: object | undefined, optionsFetch?: IOptionsFetch): Promise<T | undefined> {
     const response = await this.baseHttp<T>({
+      microservice,
       url,
       headers,
       method: 'get',
@@ -27,8 +36,9 @@ class CustomFecth {
     return response
   }
 
-  async delete<T>(url: string, headers?: object | undefined): Promise<T | undefined> {
+  async delete<T>(microservice: keyof TMicroservice, url: string, headers?: object | undefined): Promise<T | undefined> {
     const response = await this.baseHttp<T>({
+      microservice,
       url,
       headers,
       method: 'delete'
@@ -36,8 +46,9 @@ class CustomFecth {
     return response
   }
 
-  async put<T>(url: string, data: object = {}, headers?: object | undefined): Promise<T | undefined> {
+  async put<T>(microservice: keyof TMicroservice, url: string, data: object = {}, headers?: object | undefined): Promise<T | undefined> {
     const response = await this.baseHttp<T>({
+      microservice,
       url,
       data,
       headers,
@@ -46,8 +57,9 @@ class CustomFecth {
     return response
   }
 
-  async patch<T>(url: string, data: object = {}, headers?: object | undefined): Promise<T | undefined> {
+  async patch<T>(microservice: keyof TMicroservice, url: string, data: object = {}, headers?: object | undefined): Promise<T | undefined> {
     const response = await this.baseHttp<T>({
+      microservice,
       url,
       data,
       headers,
@@ -59,26 +71,28 @@ class CustomFecth {
   async baseHttp<T>(baseHttp: BaseHttp): Promise<T | undefined> {
     const loaderAnimation = new LoaderAnimation()
     try {
-      const token = localStorage.getItem('x-token')
+      const token = constants.xToken()
       const { showLoader } = baseHttp.optionsFetch ?? {}
       baseHttp.headers = { ...baseHttp.headers,["x-token"]: token}
       if (!showLoader) loaderAnimation.showAfter(500)
-      const result = await this.customFecth.request(baseHttp)
+      const microservice = this.microservices.get(baseHttp.microservice)
+      if(microservice == undefined) {
+        return
+      } 
+      const result = await microservice.request(baseHttp)
       loaderAnimation.hide()
       return result.data as T
     } catch (error: unknown) {
+      console.error(error)
       loaderAnimation.hide()
       if (baseHttp.optionsFetch?.showErrors === false) return
-      let errorMsg: string = 'Internal error try later'
       if (error instanceof AxiosError) {
         const response = error.response
-        errorMsg = response?.data?.message ?? errorMsg
+        const errorMsg = response?.data?.message ?? this.errorMsg
         Toast.error(errorMsg)
         return
       }
-      Toast.error(errorMsg)
+      Toast.error(this.errorMsg)
     }
   }
 }
-
-export { CustomFecth }

@@ -25,3 +25,9 @@ func (m ModelGame) FindByPlayerId(playerId int) *services.Game {
 func (m ModelGame) Update(game *services.Game) {
 	db.Updates(game)
 }
+
+func (m ModelGame) FindAll() *[]services.Game {
+	var games []services.Game
+	db.Find(&games).Where("status != finished")
+	return &games
+}

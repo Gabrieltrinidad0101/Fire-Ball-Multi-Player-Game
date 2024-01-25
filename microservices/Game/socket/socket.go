@@ -11,19 +11,26 @@ import (
 )
 
 type GameModel interface {
-	FindById(int) services.Game
+	FindById(uint) *services.Game
 }
 
 type PlayerApi interface {
-	setGame(int)
+	SetGame(uint)
 }
 
-type SockerServer struct {
+type SocketServer struct {
 	gameModel GameModel
 	playerApi PlayerApi
 }
 
-func (s *SockerServer) RealTimeServer() (func(context echo.Context) error, error) {
+func NewSocketServer(gameModel GameModel, playerApi PlayerApi) *SocketServer {
+	return &SocketServer{
+		gameModel,
+		playerApi,
+	}
+}
+
+func (s *SocketServer) RealTimeServer() (func(context echo.Context) error, error) {
 	server, err := socketio.NewServer(nil)
 	if err != nil {
 		log.Fatal("error establishing new socketio server")
@@ -31,18 +38,7 @@ func (s *SockerServer) RealTimeServer() (func(context echo.Context) error, error
 	}
 
 	server.On("connection", func(so socketio.Socket) {
-		gameIdString := so.Request().Header.Get("gameId")
-		gameId, err := strconv.Atoi(gameIdString)
-		if err != nil {
-			return
-		}
-		game := s.gameModel.FindById(gameId)
-		if game.ID <= 0 {
-			so.Emit(so.Id(), "Error in the Game ID")
-			return
-		}
-
-		s.playerApi.setGame(gameId)
+		gameIdString := so.Request().Context().Value("gameId").(string)
 
 		so.Join(gameIdString)
 		so.On("move user", func(data interface{}) {
@@ -69,21 +65,22 @@ func (s *SockerServer) RealTimeServer() (func(context echo.Context) error, error
 			server.BroadcastTo(gameIdString, "stop player", data)
 		})
 	})
-
 	return func(context echo.Context) error {
-		gameIdString := context.Request().Header.Get("gameId")
+		gameIdString := context.QueryParam("gameId")
 		gameId, err := strconv.Atoi(gameIdString)
 		if err != nil {
 			return context.JSON(http.StatusUnauthorized, map[string]string{
 				"Error": "Invalid token",
 			})
 		}
-		game := s.gameModel.FindById(gameId)
+		game := s.gameModel.FindById(uint(gameId))
 		if game.ID <= 0 {
 			return context.JSON(http.StatusUnauthorized, map[string]string{
 				"Error": "Invalid token",
 			})
 		}
+		s.playerApi.SetGame(uint(gameId))
+		context.Set("gameId", gameIdString)
 		server.ServeHTTP(context.Response(), context.Request())
 		return nil
 	}, nil

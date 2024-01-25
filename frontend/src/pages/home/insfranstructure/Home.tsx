@@ -3,19 +3,32 @@ import Background from '../../../components/Background'
 import HomeCss from './Home.module.css'
 import IUser from '../../../share/domian/user'
 import { homeApp } from './dependencies'
+import IGame from '../../../share/domian/game'
 export default function Home() {
-  const [players,setPlayers] = useState<Array<IUser>>([])
+  const [players, setPlayers] = useState<Array<IUser>>([])
+  const [games, setGames] = useState<Array<IGame>>([])
 
-  const getUsers = async ()=>{
-    if(players.length > 0) return
-    setPlayers(await homeApp.getPlayer())
+  const getUsers = async () => {
+    setPlayers(await homeApp.getPlayers())
   }
 
-  useEffect(()=>{
-    getUsers().catch((error: any)=>{
+  const getGames = async () => {
+    setGames(await homeApp.getGames())
+  }
+
+  useEffect(() => {
+    getUsers().catch((error: any) => {
       console.log(error)
     })
-  },[])
+
+    getGames()
+      .then(()=>{
+        console.log(games)
+      })
+    .catch((error: any) => {
+      console.log(error)
+    })
+  }, [])
 
   return (
     <Background>
@@ -27,6 +40,13 @@ export default function Home() {
           </div>
           <div className={HomeCss.plays}>
             {
+              games.map((game) =>
+                <div className={HomeCss.play}>
+                  <h2>{game.uuid}</h2>
+                  <div className={ game.status == 'started' ? HomeCss.isActive : HomeCss.isNotActive}>
+                  </div>
+                </div>
+              )
             }
           </div>
         </div>
@@ -35,14 +55,14 @@ export default function Home() {
             <h1 className={HomeCss.title}>Players</h1>
             <div className={HomeCss.users}>
               {
-                players.map(player=>
+                players.map(player =>
                   <div key={player.id}>
-                    <img src="https://api.dicebear.com/6.x/initials/svg?seed=peppe" alt="" />
+                    <img src={`https://api.dicebear.com/6.x/personas/svg?seed=${player.name}`} alt="" />
                     <h1>{player.name}</h1>
                   </div>
                 )
               }
-          </div>
+            </div>
           </div>
         </div>
       </div>

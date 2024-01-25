@@ -14,14 +14,21 @@ type Game struct {
 	Status   string `json:"status"`
 }
 
+type Player struct {
+	Name string `json:"name"`
+	Id   int    `json:"id"`
+}
+
 type ApiPlayer interface {
 	SetGame(gameId uint)
+	GetData(tokenPlayer string) *Player
 }
 
 type ModelGame interface {
 	Insert(*Game)
 	FindByPlayerId(int) *Game
 	Update(*Game)
+	FindAll() *[]Game
 }
 
 type Response struct {
@@ -105,5 +112,13 @@ func (g *ServiceGame) NewPlayer(playerIdString string) Response {
 	return Response{
 		StatusCode: 200,
 		Message:    canConnect,
+	}
+}
+
+func (g *ServiceGame) FindAll() Response {
+	game := g.modelGame.FindAll()
+	return Response{
+		StatusCode: 200,
+		Message:    game,
 	}
 }

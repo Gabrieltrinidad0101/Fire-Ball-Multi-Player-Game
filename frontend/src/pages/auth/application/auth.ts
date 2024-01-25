@@ -5,9 +5,9 @@ import IToast from '../../../share/domian/IToast'
 
 const Authentication = async (user: IUser,customFecth: ICustomFecth,toast: IToast,auth: boolean, navigation: () => void): Promise<void> => {
   try {
-    const httpResult = await customFecth.post<string>(auth ? APIURL.login : APIURL.register ,user)
+    const httpResult = await customFecth.post<string>("user", auth ? APIURL.login : APIURL.register ,user)
     if (httpResult == null) return
-    localStorage.setItem('token', httpResult.message ?? '')
+    localStorage.setItem('x-token', httpResult.message ?? '')
     navigation?.()
   } catch (error) {
     toast.error('Internal error try later')

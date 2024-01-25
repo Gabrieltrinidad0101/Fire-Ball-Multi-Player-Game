@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react"
+import { useEffect } from "react"
 import { StartGame } from "../application/main"
 import "./main.css"
 import Background from "../../../components/Background"

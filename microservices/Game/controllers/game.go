@@ -36,3 +36,9 @@ func (g *GameController) NewPlayer(ctx echo.Context) error {
 	ctx.JSON(response.StatusCode, response)
 	return nil
 }
+
+func (g *GameController) FindAll(ctx echo.Context) error {
+	response := g.serviceGame.FindAll()
+	ctx.JSON(response.StatusCode, response)
+	return nil
+}
