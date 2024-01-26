@@ -22,7 +22,8 @@ export class Game {
         img.onload = () => {
             res(img)
         };
-        img.src = image ?? "";
+        const orign = window.location.origin
+        img.src = `${orign}/public/${image}`;
     })
 
     private drawImage(ctx: CanvasRenderingContext2D, image: HTMLImageElement, object: GameObject) {

@@ -32,16 +32,15 @@ func NewSocketServer(gameModel GameModel, playerApi PlayerApi) *SocketServer {
 var playersByGame = map[string][]interface{}{}
 
 func (s *SocketServer) RealTimeServer(context echo.Context) error {
-	gameUuid := context.QueryParam("gameUuid")
-	game := s.gameModel.FindByUuid(gameUuid)
-	if game.ID <= 0 {
-		return context.JSON(http.StatusUnauthorized, map[string]string{
-			"Error": "Invalid token",
-		})
-	}
+	// gameUuid := context.QueryParam("gameUuid")
+	// game := s.gameModel.FindByUuid(gameUuid)
+	// if game.ID <= 0 {
+	// 	return context.JSON(http.StatusUnauthorized, map[string]string{
+	// 		"Error": "Invalid token",
+	// 	})
+	// }
 	//s.playerApi.SetGame(game.ID)
-	context.Set("gameId", gameUuid)
-	s.serverSocket(gameUuid, context.Response(), context.Request())
+	s.serverSocket("myChat", context.Response(), context.Request())
 	return nil
 }
 
@@ -51,7 +50,6 @@ func (s *SocketServer) serverSocket(gameIdString string, w http.ResponseWriter, 
 		log.Fatal("error establishing new socketio server")
 		return
 	}
-
 	server.On("connection", func(so socketio.Socket) {
 
 		so.Join(gameIdString)

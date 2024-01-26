@@ -12,7 +12,7 @@ func Init(e *echo.Echo) {
 	gameController := configuration.GameController()
 	socket := configuration.SocketController()
 	e.HideBanner = true
-	e.GET("/socket.io/", socket.RealTimeServer)
+	e.Any("/socket.io/", socket.RealTimeServer)
 
 	game := e.Group("/game")
 	game.GET("/findAll", gameController.FindAll, middleware.Auth)

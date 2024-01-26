@@ -19,7 +19,7 @@ class Obstacle extends GameObject {
         this.x = this.w * 2 + (Math.random() * (Game.canvas.width - this.w * 2))
         if(this.x < 1000 / 2) this.angle = -this.angle
 
-        this.imageAnimation = ["./fireball/fireball1.gif","./fireball/fireball2.gif","./fireball/fireball3.gif","./fireball/fireball4.gif"]
+        this.imageAnimation = ["fireball/fireball1.gif","fireball/fireball2.gif","fireball/fireball3.gif","fireball/fireball4.gif"]
         this.flipX = this.angle > 0
         this.delayFrame = 300
         this.animation()

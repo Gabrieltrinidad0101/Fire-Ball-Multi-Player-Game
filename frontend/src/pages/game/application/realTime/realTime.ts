@@ -37,6 +37,7 @@ export const StartRealTimeGame = (gameId: string)=>{
     
     socket.on("new user", (data: any)=>{
         if(data.id === id) return
+        alert("OK")
         new Player(socket,data,false)
     })
 

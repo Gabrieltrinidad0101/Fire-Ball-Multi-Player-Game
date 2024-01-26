@@ -182,7 +182,7 @@ export class Player extends GameObject {
     showPlayerAnimation(animation: string,frames: number): void {
         const animationImages = []
         for(let i = 1; i <= frames; i++){
-            animationImages.push(`./${animation}/player${i}.gif`) 
+            animationImages.push(`${animation}/player${i}.gif`) 
         }
         this.flipX = this.dirrection === "left"
         this.imageAnimation = animationImages
@@ -190,10 +190,7 @@ export class Player extends GameObject {
 
     camera(playerId: string){
         if(playerId !== this.id || Game.canvasContainer === null)  return
-        const dirrection = this.dirrection === "left" ? -1 : 1
-        const padding = 10
-        if(this.x <= Game.cameraWidth || 
-           this.x >= Game.canvas.width - (Game.canvasContainer.clientWidth - Game.cameraWidth - padding)) return
-        Game.canvasContainer.scrollLeft += dirrection * this.speed
+        if(this.x <= 1000) Game.canvasContainer.scrollLeft = 0
+        else if(this.x <= 2000) Game.canvasContainer.scrollLeft = Game.canvasContainer.scrollWidth
     }
 }
