@@ -1,10 +1,10 @@
 import StartGameCss from "./startGame.module.css"
 import Logo from "../../../public/OIG-removebg.png"
-export default function StartGame() {
+export default function StartGame({totalPlayers}: {totalPlayers: number}) {
   return (
     <div className={StartGameCss.container}>
-        <div>
-            <h1>TEST</h1>
+        <div className={StartGameCss.players}>
+            <h1>PLAYERS: {totalPlayers}</h1>
         </div>
         <div>
             <button className={StartGameCss.btn}>

@@ -1,16 +1,13 @@
-import { spawnear } from "./Obstacle/obstacle";
 import { Game } from "./game/game";
-import {StartRealTimeGame}  from "./realTime/realTime";
+import {RealTimeGame}  from "./realTime/realTime";
 
-export const StartGame = async (gameId: string)=>{
-    if(document.getElementById("game") == undefined) return
-    if(Game.canvas != null) return
+
+export const StartGame = (gameId: string): RealTimeGame | undefined => {
     const game = new Game()
     game.context()
-    StartRealTimeGame(gameId)
+    const realTime = new RealTimeGame(gameId)
     game.background = "backgroundBig.png"   
-    spawnear()
-    await game.render([
+    game.render([
         "backgroundBig.png",
         "player/player1.gif",
         "player/player2.gif",
@@ -39,4 +36,5 @@ export const StartGame = async (gameId: string)=>{
         "fireball/fireball5.gif",
         "object.png",
         "bullet.png"])
+    return realTime
 }

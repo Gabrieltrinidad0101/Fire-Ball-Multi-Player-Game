@@ -34,16 +34,30 @@ type PlayerSocket struct {
 	data     interface{}
 }
 
-var playersByGame = map[string][]PlayerSocket{}
+type Game struct {
+	Fire     bool
+	PlayerId int
+	Players  *[]PlayerSocket
+}
+
+var games = map[string]Game{}
 
 func (s *SocketServer) RealTimeServer(socketServer *socketio.Server) func(context echo.Context) error {
 	return func(context echo.Context) error {
 		gameUuid := context.QueryParam("gameUuid")
-		game := s.gameModel.FindByUuid(gameUuid)
-		if game.ID <= 0 {
+		gameData := s.gameModel.FindByUuid(gameUuid)
+
+		if gameData.ID <= 0 {
 			return context.JSON(http.StatusUnauthorized, map[string]string{
 				"Error": "Invalid token",
 			})
+		}
+
+		if games[gameUuid].PlayerId == 0 {
+			games[gameUuid] = Game{
+				PlayerId: gameData.PlayerId,
+				Players:  &[]PlayerSocket{},
+			}
 		}
 		//s.playerApi.SetGame(game.ID)
 		socketServer.ServeHTTP(context.Response(), context.Request())
@@ -75,12 +89,23 @@ func (s *SocketServer) LoadServerSocket() *socketio.Server {
 				so.Id(),
 				data,
 			}
-			playersByGame[gameUuid] = append(playersByGame[gameUuid], playerSocket)
+			game := games[gameUuid]
+			*game.Players = append(*game.Players, playerSocket)
 			so.BroadcastTo(gameUuid, "new player", data)
+			server.BroadcastTo(gameUuid, "total players", len(*game.Players))
 		})
 
 		so.On("send bullet", func(data interface{}) {
+			if !games[gameUuid].Fire {
+				return
+			}
 			server.BroadcastTo(gameUuid, "send bullet", data)
+		})
+
+		so.On("start game", func() {
+			game := games[gameUuid]
+			game.Fire = true
+			server.BroadcastTo(gameUuid, "start game")
 		})
 
 		so.On("delete object", func(data interface{}) {
@@ -92,24 +117,26 @@ func (s *SocketServer) LoadServerSocket() *socketio.Server {
 		})
 
 		so.On("disconnection", func() {
-			players := playersByGame[gameUuid]
+			game := games[gameUuid]
+			players := games[gameUuid].Players
 			playersNoDead := []PlayerSocket{}
-			for _, player := range players {
+			for _, player := range *players {
 				if player.socketId == so.Id() {
 					server.BroadcastTo(gameUuid, "disconnection", player.data)
 					continue
 				}
 				playersNoDead = append(playersNoDead, player)
 			}
-			playersByGame[gameUuid] = playersNoDead
+			*game.Players = playersNoDead
+			server.BroadcastTo(gameUuid, "total players", len(*game.Players))
 
 			if len(playersNoDead) == 1 {
 				server.BroadcastTo(gameUuid, "win")
 			}
 		})
 
-		players := playersByGame[gameUuid]
-		for _, player := range players {
+		players := games[gameUuid].Players
+		for _, player := range *players {
 			so.Emit("new player", player.data)
 		}
 	})

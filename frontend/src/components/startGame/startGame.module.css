@@ -79,3 +79,8 @@
     transform: translateX(200%);
     transition-delay: 300ms;
 }
+
+.players{
+    font-size: 50px;
+    color: #fff;
+}
