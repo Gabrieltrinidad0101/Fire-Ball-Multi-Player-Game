@@ -144,7 +144,7 @@ export class Player extends GameObject {
             this.isDead = true
             setTimeout(()=>{
                 this.socket?.emit("delete object",this.id)    
-            },800)            
+            },800)
             return
         }
         if(object.type !== "bullet") return

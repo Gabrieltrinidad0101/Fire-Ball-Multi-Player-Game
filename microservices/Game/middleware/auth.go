@@ -18,13 +18,13 @@ func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 		tokenString := ctx.Request().Header.Get("x-token")
 
 		if tokenString == "" {
-			return ctx.JSON(errorResponse.StatusCode, errorResponse.Message)
+			return ctx.JSON(errorResponse.StatusCode, errorResponse)
 		}
 
 		apisPlayer := apis.ApisPlayer{}
 		player, err := apisPlayer.GetData(tokenString)
 		if err != nil {
-			return ctx.JSON(errorResponse.StatusCode, errorResponse.Message)
+			return ctx.JSON(errorResponse.StatusCode, errorResponse)
 		}
 		ctx.Set("player", player)
 		return next(ctx)

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import Background from '../../../components/Background'
 import HomeCss from './Home.module.css'
-import IUser from '../../../share/domian/user'
+import IUser from '../../../share/domian/player'
 import { homeApp } from './dependencies'
 import IGame from '../../../share/domian/game'
 import { useNavigate } from 'react-router-dom'
@@ -45,13 +45,11 @@ export default function Home() {
             <h1 className={HomeCss.title}>Games</h1>
             <button onClick={newGame} className={HomeCss.newGame}>New Game</button>
           </div>
-          <div className={HomeCss.plays}>
+          <div className={HomeCss.games}>
             {
               games.map((game) =>
-                <div className={HomeCss.play}>
+                <div className={HomeCss.game} key={game.uuid}>
                   <h2>{game.uuid}</h2>
-                  <div className={ game.status == 'started' ? HomeCss.isActive : HomeCss.isNotActive}>
-                  </div>
                 </div>
               )
             }
@@ -60,7 +58,7 @@ export default function Home() {
         <div className={HomeCss.card}>
           <div className={HomeCss.containerPlayer}>
             <h1 className={HomeCss.title}>Players</h1>
-            <div className={HomeCss.users}>
+            <div className={HomeCss.players}>
               {
                 players.map(player =>
                   <div key={player.id}>

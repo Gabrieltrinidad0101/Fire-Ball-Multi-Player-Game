@@ -1,36 +1,23 @@
-import React, { useEffect, useState, useContext } from 'react'
+import { useEffect, useState } from 'react'
 import { customFecth } from './dependencies'
-import type IHttpResult from '../../../../share/domain/httpResult'
-import type IUser from '../../../../share/domain/user'
-import type IUserState from '../domian/user'
 import { Outlet, useNavigate } from 'react-router-dom'
-import { isEmptyNullOrUndefined } from '../../../../share/application/isEmptyNullUndefiner'
+import IPlayer from '../domian/player'
+import APIURL from '../application/Api'
+import { isNullEmptyUndefinedOrNan } from '../application/isNullEmptyUndifinedOrNan'
 
-const userInitialState: IUser = {
-  name: '',
-  password: '',
-  typeAuthentication: 'Login',
-  rol: 'user',
-  _id: '',
-  email: '',
-  cellPhone: ''
-}
 
-const AuthContext = React.createContext<IUserState>({
-  user: userInitialState,
-  setUser: (user: IUser) => user
-})
-
-const AuthenticationProvider = (): JSX.Element => {
-  const [user, setUser] = useState<IUser>(userInitialState)
+export const AuthenticationProvider = (): JSX.Element => {
   const navigation = useNavigate()
+  const [auth,setAuth] = useState(true)
 
   const verifyAuthentication = async (): Promise<boolean> => {
     try {
-      const result = await customFecth.get<IHttpResult<IUser>>('/user/verifyAuthentication')
-      if (result?.message === undefined || isEmptyNullOrUndefined(result?.message)) return true
-      setUser(result.message)
-      return false
+      const result = await customFecth.get<IPlayer>("player",APIURL.verifyAccount,{
+        showErrors: false
+      })
+      const noHasAccount = result?.message?.id === undefined || isNullEmptyUndefinedOrNan(result?.message?.id) || result?.message?.id <= 0
+      setAuth(noHasAccount)
+      return noHasAccount 
     } catch (error) {
       console.log(error)
     }
@@ -39,23 +26,13 @@ const AuthenticationProvider = (): JSX.Element => {
 
   useEffect(() => {
     verifyAuthentication()
-      .then((noHasAccount) => {
-        if (noHasAccount) navigation('/register')
+      .then((nohasAccount) => {
+        if (nohasAccount) navigation('/register')
       })
       .catch(error => {
         console.log(error)
       })
   }, [])
 
-  const containerSetUser = (user: IUser): void => {
-    setUser((prevUser: IUser | undefined) => ({ ...prevUser, ...user }))
-  }
-  return <AuthContext.Provider value={{ user, setUser: containerSetUser }} >{
-    isEmptyNullOrUndefined(user?._id) ? <></> : <Outlet />
-  }</AuthContext.Provider>
+  return auth ? <></> : <Outlet />
 }
-export const useUserContext = (): IUserState => {
-  return useContext<IUserState>(AuthContext)
-}
-
-export { AuthContext, AuthenticationProvider }

@@ -30,7 +30,7 @@ func userAuth(ctx echo.Context, next echo.HandlerFunc) error {
 	tokenString := ctx.Request().Header.Get("x-token")
 
 	if tokenString == "" {
-		return ctx.JSON(errorResponse.StatusCode, errorResponse.Message)
+		return ctx.JSON(errorResponse.StatusCode, errorResponse)
 	}
 
 	token, err := jwt.ParseWithClaims(tokenString, &utils.PlayerJwt{}, func(t *jwt.Token) (interface{}, error) {
@@ -38,7 +38,7 @@ func userAuth(ctx echo.Context, next echo.HandlerFunc) error {
 	})
 
 	if err != nil {
-		return ctx.JSON(errorResponse.StatusCode, errorResponse.Message)
+		return ctx.JSON(errorResponse.StatusCode, errorResponse)
 	}
 
 	if player, ok := token.Claims.(*utils.PlayerJwt); ok && token.Valid {
@@ -46,21 +46,21 @@ func userAuth(ctx echo.Context, next echo.HandlerFunc) error {
 		return next(ctx)
 	}
 
-	return ctx.JSON(errorResponse.StatusCode, errorResponse.Message)
+	return ctx.JSON(errorResponse.StatusCode, errorResponse)
 }
 
 func microservicesAuth(ctx echo.Context, next echo.HandlerFunc) error {
 	tokenString := ctx.Request().Header.Get("x-token-microservice")
 	decodedBytes, err := base64.StdEncoding.DecodeString(tokenString)
 	if err != nil {
-		return ctx.JSON(errorResponse.StatusCode, errorResponse.Message)
+		return ctx.JSON(errorResponse.StatusCode, errorResponse)
 	}
 
 	decodedString := string(decodedBytes)
 	authData := strings.Split(decodedString, ":")
 
 	if len(authData) != 2 {
-		return ctx.JSON(errorResponse.StatusCode, errorResponse.Message)
+		return ctx.JSON(errorResponse.StatusCode, errorResponse)
 	}
 
 	microservices := utils.NewMicroservicesAuth()
@@ -69,7 +69,7 @@ func microservicesAuth(ctx echo.Context, next echo.HandlerFunc) error {
 		Password: authData[1],
 	})
 	if !access {
-		return ctx.JSON(errorResponse.StatusCode, errorResponse.Message)
+		return ctx.JSON(errorResponse.StatusCode, errorResponse)
 	}
 	return next(ctx)
 }

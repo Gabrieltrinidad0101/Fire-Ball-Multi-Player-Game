@@ -3,8 +3,8 @@ const APIURL = {
   register: '/player/register',
   findAllPlayers: '/player/findAll',
   findAllGames: '/game/findAll',
-  newGame: '/game/new'
-
+  newGame: '/game/new',
+  verifyAccount: '/player/getData'
 }
 
 export default APIURL

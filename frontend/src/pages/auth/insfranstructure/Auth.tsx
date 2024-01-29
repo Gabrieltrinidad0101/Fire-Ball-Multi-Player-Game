@@ -1,16 +1,16 @@
 import { ChangeEvent, useState } from 'react'
 import Background from '../../../components/Background'
 import AuthCss from './Auth.module.css'
-import IUser from '../../../share/domian/user'
+import IPlayer from '../../../share/domian/player'
 import { Authentication } from '../application/auth'
 import { Toast, customFecth } from '../../../share/insfranstructure/dependencies'
 import {  Link, useNavigate } from 'react-router-dom'
 export default function Auth({auth}: {auth: boolean}) {
-  const [user,setUser] = useState<IUser>({name: "",password: "",id: 0})
+  const [player,setPlayer] = useState<IPlayer>({name: "",password: "",id: 0})
   const navigate = useNavigate()
   const onChange = (e: ChangeEvent<HTMLInputElement>)=>{
     const {name,value} = e.target
-    setUser(()=>({...user,[name]: value}))
+    setPlayer(()=>({...player,[name]: value}))
   }
 
   const redirect = ()=>{
@@ -19,8 +19,8 @@ export default function Auth({auth}: {auth: boolean}) {
 
   const onClick = (e: React.MouseEvent<HTMLInputElement>)=>{
     e.preventDefault()
-    console.log(user)
-    Authentication(user,customFecth,Toast,auth, redirect)
+    console.log(player)
+    Authentication(player,customFecth,Toast,auth, redirect)
   }
 
   return (
@@ -33,7 +33,7 @@ export default function Auth({auth}: {auth: boolean}) {
             </div>
             <div className={AuthCss.form}>
               <div className={AuthCss.inputBox}>
-                <input type="text" name="name" required onChange={onChange} /> <i>Username</i>
+                <input type="text" name="name" required onChange={onChange} /> <i>Player Name</i>
               </div>
               <div className={AuthCss.inputBox}>
                 <input type="password" name='password' required onChange={onChange} /> <i>Password</i>

@@ -1,7 +1,7 @@
 import { type IOptionsFetch } from './customFecth'
 
 export interface TMicroservice {
-  user: string
+  player: string
   game: string  
 }
 

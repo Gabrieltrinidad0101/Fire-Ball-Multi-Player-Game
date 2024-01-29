@@ -50,8 +50,8 @@ func (g *ServiceGame) New(player *Player) Response {
 	game := g.modelGame.FindByPlayerId(player.Id)
 	if game.ID > 0 {
 		return Response{
-			StatusCode: 200,
-			Message:    game,
+			StatusCode: 409,
+			Message:    "You are in a game ",
 		}
 	}
 	newGame := &Game{}

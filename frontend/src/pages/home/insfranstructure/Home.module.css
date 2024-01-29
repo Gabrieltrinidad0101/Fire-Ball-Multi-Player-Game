@@ -51,7 +51,7 @@
 }
 
 
-.plays{
+.games{
     width: 100%;
     height: 90%;
     display: grid;
@@ -62,39 +62,26 @@
     padding: 20px;
 }
 
-.play{
-    height: 50px;
+.game{
+    height: 70px;
     background: #0f0;
     border-radius: 10px;
-    display: grid;
-    grid-template-columns: 90% 10%;
+    display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
 }
 
-.play > h2{
+.game > h2{
     text-align: center;
 }
 
-
-.isActive{
-    background: white;
-    width: 10px;
-    height: 10px;
-    border-radius: 10px;
-}
-
-.isNotActive{
-    background: rgb(105, 105, 105);
-}
-
-.users{
+.players{
     overflow-y: auto;
     overflow-x: hidden;
 }
 
-.users > div{
+.players > div{
     display: grid;
     grid-template-columns: 20% 80%;
     gap: 10px;

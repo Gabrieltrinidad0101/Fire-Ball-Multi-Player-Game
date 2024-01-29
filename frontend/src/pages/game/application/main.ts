@@ -9,7 +9,7 @@ export const StartGame = async (gameId: string)=>{
     game.context()
     StartRealTimeGame(gameId)
     game.background = "backgroundBig.png"   
-    //spawnear()
+    spawnear()
     await game.render([
         "backgroundBig.png",
         "player/player1.gif",

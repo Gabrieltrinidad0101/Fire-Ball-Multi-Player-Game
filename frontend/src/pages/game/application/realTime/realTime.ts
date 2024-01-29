@@ -6,7 +6,7 @@ import {socketIO} from "./parseSocketIO"
 export const StartRealTimeGame = (gameId: string)=>{
     const id = Math.random().toString() + Math.random().toString()
     const socket = socketIO(gameId)
-    socket.emit("new user",{x:300,y:Game.canvas.height - 60,w: 35,h: 75,imageW: 75, image: "playerRigth.png",id})
+    socket.emit("new player",{x:300,y:Game.canvas.height - 60,w: 35,h: 75,imageW: 75, image: "playerRigth.png",id})
     new Player(socket,{x:300,y:Game.canvas.height - 60,w: 35,h: 75,imageW: 75, image: "playerRigth.png",id},true);
     
     new GameObject({x:1500,y: 200,w: 300,h:30,imageW: 300, imageH: 120,image: "object.png",type: "object"})
@@ -20,8 +20,8 @@ export const StartRealTimeGame = (gameId: string)=>{
             if(game.id !== data.id) return
             const player = game as Player
             if(player.isDead) return
-            if(data.key === "d")  player.right(data.x,data.id);
-            if(data.key === "a") player.left(data.x,data.id);
+            if(data.key === "d")  player.right(data.x,id);
+            if(data.key === "a") player.left(data.x,id);
             if(data.key === "w") player.up(data.y);
         })
     })
@@ -35,9 +35,8 @@ export const StartRealTimeGame = (gameId: string)=>{
         bullet.dirrection = data.dirrection
     })
     
-    socket.on("new user", (data: any)=>{
+    socket.on("new player", (data: any)=>{
         if(data.id === id) return
-        alert("OK")
         new Player(socket,data,false)
     })
 
@@ -46,5 +45,13 @@ export const StartRealTimeGame = (gameId: string)=>{
             if(object.id !== data.id) return
             (object as Player).showPlayerAnimation("player",4)
         })
+    })
+
+    socket.on("disconnection", (data: any)=>{
+        Game.objects.delete(data.id)
+    })
+
+    socket.on("win", ()=>{
+        alert("Win")
     })
 } 

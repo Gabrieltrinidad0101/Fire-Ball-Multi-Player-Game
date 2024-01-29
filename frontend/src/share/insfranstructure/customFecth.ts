@@ -1,21 +1,22 @@
 import axios, { AxiosError, AxiosInstance } from 'axios'
 import type BaseHttp from '../domian/baseHttp'
 import { Toast} from './dependencies'
-import { type IOptionsFetch } from '../domian/customFecth'
+import ICustomFecth, { type IOptionsFetch } from '../domian/customFecth'
 import LoaderAnimation from './loaderAnimation'
 import { constants } from '../application/constants'
 import { TMicroservice } from '../domian/baseHttp'
+import IHttpResult from '../domian/httpResult'
 
-export class CustomFecth  {
+export class CustomFecth implements ICustomFecth  {
   private readonly errorMsg: string = 'Internal error try later'
   
   private readonly microservices = new Map<keyof TMicroservice,AxiosInstance>([
-    ["user",axios.create({baseURL: constants.serverUrlUser})],
+    ["player",axios.create({baseURL: constants.serverUrlUser})],
     ["game",axios.create({baseURL: constants.serverUrlGame})]
   ])
 
 
-  async post<T>(microservice: keyof TMicroservice, url: string, data: object, headers?: object | undefined): Promise<T | undefined> {
+  async post<T>(microservice: keyof TMicroservice, url: string, data: object, headers?: object | undefined): Promise<IHttpResult<T> | undefined> {
     return await this.baseHttp<T>({
       microservice,
       url,
@@ -25,7 +26,7 @@ export class CustomFecth  {
     })
   }
 
-  async get<T>(microservice: keyof TMicroservice, url: string, headers?: object | undefined, optionsFetch?: IOptionsFetch): Promise<T | undefined> {
+  async get<T>(microservice: keyof TMicroservice, url: string, headers?: object | undefined, optionsFetch?: IOptionsFetch): Promise<IHttpResult<T> | undefined> {
     const response = await this.baseHttp<T>({
       microservice,
       url,
@@ -36,7 +37,7 @@ export class CustomFecth  {
     return response
   }
 
-  async delete<T>(microservice: keyof TMicroservice, url: string, headers?: object | undefined): Promise<T | undefined> {
+  async delete<T>(microservice: keyof TMicroservice, url: string, headers?: object | undefined): Promise<IHttpResult<T> | undefined> {
     const response = await this.baseHttp<T>({
       microservice,
       url,
@@ -46,7 +47,7 @@ export class CustomFecth  {
     return response
   }
 
-  async put<T>(microservice: keyof TMicroservice, url: string, data: object = {}, headers?: object | undefined): Promise<T | undefined> {
+  async put<T>(microservice: keyof TMicroservice, url: string, data: object = {}, headers?: object | undefined): Promise<IHttpResult<T> | undefined> {
     const response = await this.baseHttp<T>({
       microservice,
       url,
@@ -57,7 +58,7 @@ export class CustomFecth  {
     return response
   }
 
-  async patch<T>(microservice: keyof TMicroservice, url: string, data: object = {}, headers?: object | undefined): Promise<T | undefined> {
+  async patch<T>(microservice: keyof TMicroservice, url: string, data: object = {}, headers?: object | undefined): Promise<IHttpResult<T> | undefined> {
     const response = await this.baseHttp<T>({
       microservice,
       url,
@@ -68,7 +69,7 @@ export class CustomFecth  {
     return response
   }
 
-  async baseHttp<T>(baseHttp: BaseHttp): Promise<T | undefined> {
+  async baseHttp<T>(baseHttp: BaseHttp): Promise<IHttpResult<T> | undefined> {
     const loaderAnimation = new LoaderAnimation()
     try {
       const token = constants.xToken()
@@ -81,13 +82,14 @@ export class CustomFecth  {
       } 
       const result = await microservice.request(baseHttp)
       loaderAnimation.hide()
-      return result.data as T
+      return result.data as IHttpResult<T>
     } catch (error: unknown) {
       console.error(error)
       loaderAnimation.hide()
       if (baseHttp.optionsFetch?.showErrors === false) return
       if (error instanceof AxiosError) {
         const response = error.response
+        console.log(response)
         const errorMsg = response?.data?.message ?? this.errorMsg
         Toast.error(errorMsg)
         return

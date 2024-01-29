@@ -55,6 +55,6 @@ func (p *PlayerController) GetDataFromUser(ctx echo.Context) error {
 			Id:   player.Player.Id,
 		},
 	}
-	ctx.JSON(response.StatusCode, response.Message)
+	ctx.JSON(response.StatusCode, response)
 	return nil
 }

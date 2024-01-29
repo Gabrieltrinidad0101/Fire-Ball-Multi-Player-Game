@@ -59,9 +59,14 @@ func (a ApisPlayer) GetData(tokenPlayer string) (*services.Player, error) {
 		return nil, err
 	}
 
-	var player services.Player
-	if err := json.Unmarshal(body, &player); err != nil {
+	var GetResponse services.Response
+	if err := json.Unmarshal(body, &GetResponse); err != nil {
 		panic(err)
 	}
-	return &player, nil
+	data := GetResponse.Message.(map[string]interface{})
+
+	return &services.Player{
+		Name: data["name"].(string),
+		Id:   int(data["id"].(float64)),
+	}, nil
 }
