@@ -6,7 +6,8 @@ export default function StartGame({totalPlayers,canStartGame,onClick,fire}: {fir
         <div className={StartGameCss.players}>
             <h1>PLAYERS: {totalPlayers}</h1>
         </div>
-        {!fire && <div>
+        {
+        !fire && <div>
             {
               canStartGame ?
               <button className={StartGameCss.btn} onClick={onClick}>
@@ -15,7 +16,8 @@ export default function StartGame({totalPlayers,canStartGame,onClick,fire}: {fir
                 <span className={StartGameCss.play}>play</span>
             </button> : <h1> Wait for the game start</h1>
             }
-        </div>}
+        </div>
+        }
     </div>
   )
 }

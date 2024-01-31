@@ -37,6 +37,10 @@ export default function Home() {
     })
   }, [])
 
+  const playToGame = (gameUuid: string)=>{
+    navigation(`/Game/${gameUuid}`)
+  }
+
   return (
     <Background>
       <div className={HomeCss.container}>
@@ -48,7 +52,7 @@ export default function Home() {
           <div className={HomeCss.games}>
             {
               games.map((game) =>
-                <div className={HomeCss.game} key={game.uuid}>
+                <div className={HomeCss.game} key={game.uuid} onClick={()=>playToGame(game.uuid)}>
                   <h2>{game.uuid}</h2>
                 </div>
               )

@@ -24,3 +24,12 @@ canvas{
 .d-none{
     display: none;
 }
+
+.counter{
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    z-index: 1020;
+    color: white;
+    font-size: 50px;
+}

@@ -30,13 +30,6 @@ func (g *GameController) Start(ctx echo.Context) error {
 	return nil
 }
 
-func (g *GameController) NewPlayer(ctx echo.Context) error {
-	player := ctx.Get("player").(*services.Player)
-	response := g.serviceGame.NewPlayer(player)
-	ctx.JSON(response.StatusCode, response)
-	return nil
-}
-
 func (g *GameController) FindAll(ctx echo.Context) error {
 	response := g.serviceGame.FindAll()
 	ctx.JSON(response.StatusCode, response)

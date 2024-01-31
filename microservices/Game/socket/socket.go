@@ -41,7 +41,7 @@ type Game struct {
 	Players  *[]PlayerSocket
 }
 
-var games = map[string]Game{}
+var games = map[string]*Game{}
 
 func (s *SocketServer) RealTimeServer(socketServer *socketio.Server) func(context echo.Context) error {
 	return func(context echo.Context) error {
@@ -54,13 +54,12 @@ func (s *SocketServer) RealTimeServer(socketServer *socketio.Server) func(contex
 			})
 		}
 
-		if games[gameUuid].PlayerId == 0 {
-			games[gameUuid] = Game{
+		if games[gameUuid] == nil {
+			games[gameUuid] = &Game{
 				PlayerId: gameData.PlayerId,
 				Players:  &[]PlayerSocket{},
 			}
 		}
-		//s.playerApi.SetGame(game.ID)
 		rawQuery := context.Request().URL.Query()
 		rawQuery.Add("playerId", fmt.Sprint(gameData.PlayerId))
 		context.Request().URL.RawQuery = rawQuery.Encode()
@@ -83,7 +82,7 @@ func (s *SocketServer) LoadServerSocket() *socketio.Server {
 		game := games[gameUuid]
 
 		so.On("move user", func(data interface{}) {
-			if !game.Fire {
+			if !games[gameUuid].Fire {
 				return
 			}
 			server.BroadcastTo(gameUuid, "move user", data)
@@ -117,11 +116,24 @@ func (s *SocketServer) LoadServerSocket() *socketio.Server {
 
 		so.On("delete object", func(data interface{}) {
 			server.BroadcastTo(gameUuid, "delete object", data)
+			server.BroadcastTo(gameUuid, "total players", len(*game.Players)-1)
+
+			playersNoDead := []PlayerSocket{}
+			for _, player := range *game.Players {
+				if player.socketId == so.Id() {
+					continue
+				}
+				playersNoDead = append(playersNoDead, player)
+			}
+			*game.Players = playersNoDead
+
+			if len(*game.Players) == 1 {
+				so.BroadcastTo(gameUuid, "win")
+			}
 		})
 
 		so.On("stop player", func(data interface{}) {
 			server.BroadcastTo(gameUuid, "stop player", data)
-			server.BroadcastTo(gameUuid, "total players", len(*game.Players)-1)
 		})
 
 		so.Emit("game data", map[string]interface{}{
@@ -135,6 +147,7 @@ func (s *SocketServer) LoadServerSocket() *socketio.Server {
 			for _, player := range *players {
 				if player.socketId == so.Id() {
 					server.BroadcastTo(gameUuid, "disconnection", player.data)
+					s.playerApi.SetGame(0)
 					continue
 				}
 				playersNoDead = append(playersNoDead, player)
@@ -142,7 +155,7 @@ func (s *SocketServer) LoadServerSocket() *socketio.Server {
 			*game.Players = playersNoDead
 			server.BroadcastTo(gameUuid, "total players", len(*game.Players))
 
-			if len(playersNoDead) == 1 {
+			if len(playersNoDead) == 1 && game.Fire {
 				server.BroadcastTo(gameUuid, "win")
 			}
 		})

@@ -16,4 +16,5 @@ func Init(e *echo.Echo) {
 	player.GET("/playersByGame", playerController.PlayersByGameController, middleware.Auth)
 	player.GET("/findAll", playerController.FindAllPlayersController, middleware.Auth)
 	player.GET("/getData", playerController.GetDataFromUser, middleware.Auth)
+	player.GET("/setGame", playerController.SetGame, middleware.Auth)
 }

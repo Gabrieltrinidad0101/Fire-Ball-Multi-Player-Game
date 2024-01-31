@@ -6,8 +6,9 @@ import {socketIO} from "./parseSocketIO"
 
 export class RealTimeGame{
     socket: SocketIO.Server
-    onStartGame = () =>{}
+    onStartGame = (_: Player) =>{}
     getGameData = (_: {fire: boolean,start: boolean}) =>{}
+    
     constructor(gameId: string){
         this.socket = socketIO(gameId)
     }
@@ -16,8 +17,8 @@ export class RealTimeGame{
         const id = Math.random().toString() + Math.random().toString()
         const playerData = {x:300,y:Game.canvas.height - 60,w: 35,h: 75,imageW: 75, image: "playerRigth.png",id}
         this.socket.emit("new player",playerData)
-        new Player(this.socket,playerData,true);
-        
+        const player = new Player(this.socket,playerData,true);
+
         new GameObject({x:1500,y: 200,w: 300,h:30,imageW: 300, imageH: 120,image: "object.png",type: "object"})
         new GameObject({x:1400,y: 300,w: 300,h:30,imageW: 300, imageH: 120,image: "object.png",type: "object"})
         new GameObject({x:1000,y: 300,w: 300,h:30,imageW: 300, imageH: 120,image: "object.png",type: "object"})
@@ -29,9 +30,9 @@ export class RealTimeGame{
                 if(game.id !== data.id) return
                 const player = game as Player
                 if(player.isDead) return
-                if(data.key === "d")  player.right(data.x,id);
-                if(data.key === "a") player.left(data.x,id);
-                if(data.key === "w") player.up(data.y);
+                if(data.key === "d")  player.right(data.x,data.y,id);
+                if(data.key === "a") player.left(data.x,data.y,id);
+                if(data.key === "w") player.up(data.x,data.y);
             })
         })
         
@@ -65,7 +66,7 @@ export class RealTimeGame{
         })
 
         this.socket.on("start game", ()=>{
-            this.onStartGame()
+            this.onStartGame(player)
         })
 
         this.socket.on("game data", (data: {fire: boolean,start: boolean})=>{

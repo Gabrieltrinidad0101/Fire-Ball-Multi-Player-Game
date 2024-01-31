@@ -7,7 +7,7 @@ export class Player extends GameObject {
     gravity = 5
     speed: number = 15
     dirrection: TDirrection = "up"
-    sendBullet = true
+    sendBullet = false
     socket: Server | null = null
     gifAnimation: HTMLImageElement | null= null
     moves = {
@@ -17,7 +17,7 @@ export class Player extends GameObject {
         canJump: false
     }
     isDead = false
-
+    
     constructor(socket: Server, baseGameObject: IBaseGameObject,canMove: boolean){
         const gameObject = baseGameObject as IGameObject
         gameObject.type = "player"
@@ -99,11 +99,11 @@ export class Player extends GameObject {
         this.moves.canJump = canJump
 
         if(this.moves.left){
-            this.socket?.emit("move user",{
+            this.moveUser({
                 x: this.x - this.speed,
                 key: "a",
-                id: this.id 
-            });
+                y: this.y
+            })
         }
         
         if(this.moves.right){
@@ -143,7 +143,8 @@ export class Player extends GameObject {
             this.showPlayerAnimation("playerDead",7)
             this.isDead = true
             setTimeout(()=>{
-                this.socket?.emit("delete object",this.id)    
+                this.socket?.emit("delete object",this.id) 
+                this.imageAnimation = []
             },800)
             return
         }
@@ -154,28 +155,32 @@ export class Player extends GameObject {
         this.showPlayerAnimation("playerDead",7)
         setTimeout(()=>{
             this.socket?.emit("delete object",this.id)
+            this.imageAnimation = []
         },800)
     }
 
-    right = (x: number,playerId: string)=>{
-        this.x = x 
+    right = (x: number,y: number,playerId: string)=>{
+        this.x = x
+        this.y = y 
         if(this.x + this.w > Game.canvas.width) this.x = Game.canvas.width - this.w
         this.dirrection = "rigth"
         this.showPlayerAnimation("playerRun",5)
         this.camera(playerId)
     }
     
-    left = (x: number,playerId: string)=>{
+    left = (x: number,y: number,playerId: string)=>{
         this.x = x
+        this.y = y
         if(this.x < 0) this.x = 0
         this.dirrection = "left"
         this.showPlayerAnimation("playerRun",5)
         this.camera(playerId)
     }
 
-    up = (y: number)=>{
+    up = (x: number,y: number)=>{
         if(!this.moves.canJump) return
         this.y = y
+        this.x = x
         if(this.y < 0) this.y = 0
     }
    

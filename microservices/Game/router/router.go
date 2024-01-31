@@ -19,5 +19,4 @@ func Init(e *echo.Echo) {
 	game.GET("/findAll", gameController.FindAll, middleware.Auth)
 	game.POST("/new", gameController.New, middleware.Auth)
 	game.POST("/start", gameController.Start, middleware.Auth)
-	game.POST("/newplayer", gameController.NewPlayer, middleware.Auth)
 }

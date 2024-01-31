@@ -5,6 +5,7 @@ import "./main.css"
 import Background from "../../../components/Background"
 import { useNavigate, useParams} from "react-router-dom"
 import { RealTimeGame } from "../application/realTime/realTime"
+import wait from "../../../share/application/wait"
 
 
 let realTimeGame: RealTimeGame | null = null
@@ -12,6 +13,7 @@ let realTimeGame: RealTimeGame | null = null
 export default function Game(): JSX.Element {
   const params = useParams()
   const navigate = useNavigate()
+  const [count,setCount] = useState<number>()
   const [gameData,setGameData] = useState<{fire: boolean,start: boolean}>({
     fire: false,
     start: false
@@ -36,8 +38,14 @@ export default function Game(): JSX.Element {
       setTotalPlayers(total)
     })
 
-    realTimeGame.onStartGame =()=>{
+    realTimeGame.onStartGame =async (player)=>{
       setGameData(prevStart=>({...prevStart,["fire"]: true}))
+      for (let i = 10; i > 0; i-- ){
+        await wait(1000)
+        setCount(i)
+      }
+      setCount(undefined)
+      player.sendBullet = true
     }
 
     realTimeGame.getGameData = (data)=>{
@@ -47,7 +55,7 @@ export default function Game(): JSX.Element {
     realTimeGame.initial()
   },[])
 
-  const onClickStartGame = ()=>{
+  const onClickStartGame = async ()=>{
     realTimeGame?.startGame()
   }
 
@@ -57,6 +65,9 @@ export default function Game(): JSX.Element {
       <div className="canvasContiner">
         <canvas width="2000px" height="500px" id="game"></canvas>
       </div>
+      <div className="counter">
+          <h1>{count}</h1>
+        </div>
     </Background>
   )
 }

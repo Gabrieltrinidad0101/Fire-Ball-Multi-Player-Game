@@ -18,7 +18,6 @@ type Player struct {
 }
 
 type ApiPlayer interface {
-	SetGame(gameId uint)
 	GetData(tokenPlayer string) (*Player, error)
 }
 
@@ -72,20 +71,6 @@ func (g *ServiceGame) Start(player *Player) Response {
 	return Response{
 		StatusCode: 200,
 		Message:    game,
-	}
-}
-
-func (g *ServiceGame) NewPlayer(player *Player) Response {
-	game := g.modelGame.FindByPlayerId(player.Id)
-	canConnect := game.Status == "started"
-
-	if canConnect {
-		g.apiPlayer.SetGame(game.ID)
-	}
-
-	return Response{
-		StatusCode: 200,
-		Message:    canConnect,
 	}
 }
 

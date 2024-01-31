@@ -11,26 +11,25 @@ import (
 
 type ApisPlayer struct{}
 
-func (a ApisPlayer) SetGame(gameId uint) {
+func (a ApisPlayer) SetGame(gameId uint) error {
 	configuration := utils.LoadEnviroments()
 	request, err := http.NewRequest("GET", configuration.PlayerUrl, nil)
 	if err != nil {
 		fmt.Println("Error creating GET request:", err)
-		return
+		return err
 	}
 	request.Header.Set("x-token-microservices", configuration.TokenMicroservice)
 	response, err := http.Get(configuration.PlayerUrl)
 	if err != nil {
 		fmt.Println("Error making GET request:", err)
-		return
+		return err
 	}
 
 	defer response.Body.Close()
 
 	_, err = io.ReadAll(response.Body)
 	if err != nil {
-		fmt.Println("Error reading response body:", err)
-		return
+		return err
 	}
 }
 

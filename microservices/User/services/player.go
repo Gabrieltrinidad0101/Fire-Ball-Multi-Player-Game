@@ -1,6 +1,8 @@
 package services
 
 import (
+	"net/http"
+
 	"github.com/go-playground/validator/v10"
 )
 
@@ -9,6 +11,7 @@ type PlayerModel interface {
 	Find(*Player) Player
 	FindByGame(string) []Player
 	FindAll() []Player
+	SetGame(playerId uint, GameId uint)
 }
 
 type Token interface {
@@ -117,5 +120,20 @@ func (u *ServicePlayer) FindAllPlayers() Response {
 	return Response{
 		StatusCode: 200,
 		Message:    players,
+	}
+}
+
+func (u *ServicePlayer) SetGame(playerToSearch *Player, gameId uint) Response {
+	player := u.PlayerModel.Find(playerToSearch)
+	if player.GameId != 0 {
+		return Response{
+			StatusCode: http.StatusBadRequest,
+			Message:    "You are already into game",
+		}
+	}
+	u.PlayerModel.SetGame(player.Id, gameId)
+	return Response{
+		StatusCode: 200,
+		Message:    "OK",
 	}
 }

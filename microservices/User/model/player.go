@@ -25,6 +25,11 @@ func (u PlayerModel) FindByGame(GameId string) []services.Player {
 	return player
 }
 
+func (u PlayerModel) SetGame(playerId uint, GameId uint) {
+	var player []services.Player
+	db.Model(&player).Where("id = ?", playerId).Update("game_id = ?", GameId)
+}
+
 func (u PlayerModel) FindAll() []services.Player {
 	var player []services.Player
 	db.Find(&player)
