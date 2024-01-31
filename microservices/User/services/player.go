@@ -2,6 +2,7 @@ package services
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/go-playground/validator/v10"
 )
@@ -123,15 +124,39 @@ func (u *ServicePlayer) FindAllPlayers() Response {
 	}
 }
 
-func (u *ServicePlayer) SetGame(playerToSearch *Player, gameId uint) Response {
-	player := u.PlayerModel.Find(playerToSearch)
-	if player.GameId != 0 {
-		return Response{
+func (u *ServicePlayer) SetGame(stringPlayerId, stringGameId string) Response {
+	// If the player diead the game id will be 0
+	gameIdInt, err := strconv.Atoi(stringGameId)
+	if err != nil {
+		response := Response{
 			StatusCode: http.StatusBadRequest,
-			Message:    "You are already into game",
+			Message:    "Invalid game id",
+		}
+		return response
+	}
+
+	playerIdInt, err := strconv.Atoi(stringPlayerId)
+	if err != nil {
+		response := Response{
+			StatusCode: http.StatusBadRequest,
+			Message:    "Invalid game id",
+		}
+		return response
+	}
+	playerId := uint(playerIdInt)
+	gameId := uint(gameIdInt)
+	if gameId != 0 {
+		player := u.PlayerModel.Find(&Player{
+			Id: playerId,
+		})
+		if player.GameId != 0 {
+			return Response{
+				StatusCode: http.StatusBadRequest,
+				Message:    "You are already into game",
+			}
 		}
 	}
-	u.PlayerModel.SetGame(player.Id, gameId)
+	u.PlayerModel.SetGame(playerId, gameId)
 	return Response{
 		StatusCode: 200,
 		Message:    "OK",

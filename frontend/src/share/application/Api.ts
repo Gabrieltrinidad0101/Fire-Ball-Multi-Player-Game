@@ -4,7 +4,8 @@ const APIURL = {
   findAllPlayers: '/player/findAll',
   findAllGames: '/game/findAll',
   newGame: '/game/new',
-  verifyAccount: '/player/getData'
+  verifyAccount: '/player/getData',
+  setGame: '/player/setGame',
 }
 
 export default APIURL

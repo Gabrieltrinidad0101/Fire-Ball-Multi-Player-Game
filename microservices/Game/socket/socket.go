@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"realTime/services"
+	"strconv"
 
 	socketio "github.com/googollee/go-socket.io"
 	"github.com/labstack/echo"
@@ -15,7 +16,7 @@ type GameModel interface {
 }
 
 type PlayerApi interface {
-	SetGame(uint)
+	SetGame(uint, uint)
 }
 
 type SocketServer struct {
@@ -147,7 +148,12 @@ func (s *SocketServer) LoadServerSocket() *socketio.Server {
 			for _, player := range *players {
 				if player.socketId == so.Id() {
 					server.BroadcastTo(gameUuid, "disconnection", player.data)
-					s.playerApi.SetGame(0)
+					id, err := strconv.Atoi(playerId)
+					if err != nil {
+						fmt.Print(err)
+						continue
+					}
+					s.playerApi.SetGame(uint(id), 0)
 					continue
 				}
 				playersNoDead = append(playersNoDead, player)

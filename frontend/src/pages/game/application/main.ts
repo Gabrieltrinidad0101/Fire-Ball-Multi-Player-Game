@@ -1,6 +1,15 @@
+import APIURL from "../../../share/application/Api";
+import { isNullEmptyUndefinedOrNan } from "../../../share/application/isNullEmptyUndifinedOrNan";
+import ICustomFecth from "../../../share/domian/customFecth";
 import { Game } from "./game/game";
 import {RealTimeGame}  from "./realTime/realTime";
 
+export const SetGame = async (customFecth: ICustomFecth,gameUuid: string) =>{
+    const data = await customFecth.post<string>("player",APIURL.setGame,{gameUuid})
+    const error = isNullEmptyUndefinedOrNan(data?.message)
+    if(error) window.location.href = "/home"
+    return error
+}
 
 export const StartGame = (gameId: string): RealTimeGame => {
     const game = new Game()

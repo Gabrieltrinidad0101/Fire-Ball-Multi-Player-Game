@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react"
-import { StartGame } from "../application/main"
+import { StartGame,SetGame} from "../application/main"
 import StartGameComponet from "../../../components/startGame/StartGame"
 import "./main.css"
 import Background from "../../../components/Background"
 import { useNavigate, useParams} from "react-router-dom"
 import { RealTimeGame } from "../application/realTime/realTime"
 import wait from "../../../share/application/wait"
-
+import { customFecth } from "../../../share/insfranstructure/dependencies";
 
 let realTimeGame: RealTimeGame | null = null
 
@@ -20,18 +20,15 @@ export default function Game(): JSX.Element {
   })
   const [totalPlayers,setTotalPlayers] = useState<number>(1)
 
-  useEffect(()=>{
-
-    window.addEventListener('beforeunload',event => {
-      event.returnValue = "Are you sure you want to leave? If you leave, you're going to die";
-    });
-
+  const fetchData = async ()=>{
     const gameId = params.gameId
     if(gameId === undefined) {
       navigate("/Home")
       return
     }
 
+    const error = await SetGame(customFecth,gameId)
+    if(error) return
     realTimeGame = StartGame(gameId)
     
     realTimeGame.onTotal((total: number)=>{
@@ -53,6 +50,17 @@ export default function Game(): JSX.Element {
     }
 
     realTimeGame.initial()
+  }
+
+  useEffect(()=>{
+
+    window.addEventListener('beforeunload',event => {
+      event.returnValue = "Are you sure you want to leave? If you leave, you're going to die";
+    });
+
+    fetchData().catch(error=>{
+      console.log(error)
+    })
   },[])
 
   const onClickStartGame = async ()=>{

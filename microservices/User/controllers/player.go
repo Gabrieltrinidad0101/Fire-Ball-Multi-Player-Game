@@ -1,8 +1,7 @@
 package controllers
 
 import (
-	"net/http"
-	"strconv"
+	"fmt"
 	"user/services"
 	"user/utils"
 
@@ -63,20 +62,11 @@ func (p *PlayerController) GetDataFromUser(ctx echo.Context) error {
 
 func (p *PlayerController) SetGame(ctx echo.Context) error {
 	stringGameId := ctx.QueryParam("gameId")
-	gameId, err := strconv.Atoi(stringGameId)
-	if err != nil {
-		response := services.Response{
-			StatusCode: http.StatusBadRequest,
-			Message:    "Invalid game id",
-		}
-		return ctx.JSON(response.StatusCode, response)
+	stringPlayerId := ctx.QueryParam("playerId")
+	if stringPlayerId == "" {
+		player := ctx.Get("player").(*utils.PlayerJwt)
+		stringPlayerId = fmt.Sprint(player.Player.Id)
 	}
-	player := ctx.Get("player").(*utils.PlayerJwt)
-	p.ServicePlayer.SetGame(&services.Player{
-		Name:     player.Name,
-		Password: player.Password,
-		Id:       player.Player.Id,
-		GameId:   player.GameId,
-	}, uint(gameId))
-	return nil
+	response := p.ServicePlayer.SetGame(stringGameId, stringPlayerId)
+	return ctx.JSON(response.StatusCode, response)
 }
