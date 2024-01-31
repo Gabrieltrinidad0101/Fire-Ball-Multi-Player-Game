@@ -4,12 +4,18 @@ import StartGameComponet from "../../../components/startGame/StartGame"
 import "./main.css"
 import Background from "../../../components/Background"
 import { useNavigate, useParams} from "react-router-dom"
+import { RealTimeGame } from "../application/realTime/realTime"
 
 
+let realTimeGame: RealTimeGame | null = null
 
 export default function Game(): JSX.Element {
   const params = useParams()
   const navigate = useNavigate()
+  const [gameData,setGameData] = useState<{fire: boolean,start: boolean}>({
+    fire: false,
+    start: false
+  })
   const [totalPlayers,setTotalPlayers] = useState<number>(1)
 
   useEffect(()=>{
@@ -24,19 +30,30 @@ export default function Game(): JSX.Element {
       return
     }
 
-    const realTimeGame = StartGame(gameId)
-
-    realTimeGame?.onTotal((total: number)=>{
+    realTimeGame = StartGame(gameId)
+    
+    realTimeGame.onTotal((total: number)=>{
       setTotalPlayers(total)
     })
-    
+
+    realTimeGame.onStartGame =()=>{
+      setGameData(prevStart=>({...prevStart,["fire"]: true}))
+    }
+
+    realTimeGame.getGameData = (data)=>{
+      setGameData(data)
+    }
+
+    realTimeGame.initial()
   },[])
 
-
+  const onClickStartGame = ()=>{
+    realTimeGame?.startGame()
+  }
 
   return (
     <Background>
-      <StartGameComponet totalPlayers={totalPlayers}/>
+      <StartGameComponet fire={gameData.fire} onClick={onClickStartGame} totalPlayers={totalPlayers} canStartGame={gameData.start}/>
       <div className="canvasContiner">
         <canvas width="2000px" height="500px" id="game"></canvas>
       </div>

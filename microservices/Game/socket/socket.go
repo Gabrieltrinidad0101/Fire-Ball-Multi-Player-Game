@@ -1,6 +1,7 @@
 package socket
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"realTime/services"
@@ -60,6 +61,9 @@ func (s *SocketServer) RealTimeServer(socketServer *socketio.Server) func(contex
 			}
 		}
 		//s.playerApi.SetGame(game.ID)
+		rawQuery := context.Request().URL.Query()
+		rawQuery.Add("playerId", fmt.Sprint(gameData.PlayerId))
+		context.Request().URL.RawQuery = rawQuery.Encode()
 		socketServer.ServeHTTP(context.Response(), context.Request())
 		return nil
 	}
@@ -73,10 +77,15 @@ func (s *SocketServer) LoadServerSocket() *socketio.Server {
 	}
 	server.On("connection", func(so socketio.Socket) {
 		gameUuid := so.Request().URL.Query().Get(("gameUuid"))
+		playerId := so.Request().URL.Query().Get(("playerId"))
 
 		so.Join(gameUuid)
+		game := games[gameUuid]
 
 		so.On("move user", func(data interface{}) {
+			if !game.Fire {
+				return
+			}
 			server.BroadcastTo(gameUuid, "move user", data)
 		})
 
@@ -89,21 +98,19 @@ func (s *SocketServer) LoadServerSocket() *socketio.Server {
 				so.Id(),
 				data,
 			}
-			game := games[gameUuid]
 			*game.Players = append(*game.Players, playerSocket)
 			so.BroadcastTo(gameUuid, "new player", data)
 			server.BroadcastTo(gameUuid, "total players", len(*game.Players))
 		})
 
 		so.On("send bullet", func(data interface{}) {
-			if !games[gameUuid].Fire {
+			if !game.Fire {
 				return
 			}
 			server.BroadcastTo(gameUuid, "send bullet", data)
 		})
 
 		so.On("start game", func() {
-			game := games[gameUuid]
 			game.Fire = true
 			server.BroadcastTo(gameUuid, "start game")
 		})
@@ -114,11 +121,16 @@ func (s *SocketServer) LoadServerSocket() *socketio.Server {
 
 		so.On("stop player", func(data interface{}) {
 			server.BroadcastTo(gameUuid, "stop player", data)
+			server.BroadcastTo(gameUuid, "total players", len(*game.Players)-1)
+		})
+
+		so.Emit("game data", map[string]interface{}{
+			"fire":  game.Fire,
+			"start": fmt.Sprint(game.PlayerId) == playerId,
 		})
 
 		so.On("disconnection", func() {
-			game := games[gameUuid]
-			players := games[gameUuid].Players
+			players := game.Players
 			playersNoDead := []PlayerSocket{}
 			for _, player := range *players {
 				if player.socketId == so.Id() {

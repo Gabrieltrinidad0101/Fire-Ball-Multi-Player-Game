@@ -6,14 +6,17 @@ import {socketIO} from "./parseSocketIO"
 
 export class RealTimeGame{
     socket: SocketIO.Server
+    onStartGame = () =>{}
+    getGameData = (_: {fire: boolean,start: boolean}) =>{}
     constructor(gameId: string){
         this.socket = socketIO(gameId)
     }
 
     initial(){
         const id = Math.random().toString() + Math.random().toString()
-        this.socket.emit("new player",{x:300,y:Game.canvas.height - 60,w: 35,h: 75,imageW: 75, image: "playerRigth.png",id})
-        new Player(this.socket,{x:300,y:Game.canvas.height - 60,w: 35,h: 75,imageW: 75, image: "playerRigth.png",id},true);
+        const playerData = {x:300,y:Game.canvas.height - 60,w: 35,h: 75,imageW: 75, image: "playerRigth.png",id}
+        this.socket.emit("new player",playerData)
+        new Player(this.socket,playerData,true);
         
         new GameObject({x:1500,y: 200,w: 300,h:30,imageW: 300, imageH: 120,image: "object.png",type: "object"})
         new GameObject({x:1400,y: 300,w: 300,h:30,imageW: 300, imageH: 120,image: "object.png",type: "object"})
@@ -33,7 +36,7 @@ export class RealTimeGame{
         })
         
         this.socket.on("delete object", (id: string)=>{
-            Game.deleteObject(id)        
+            Game.deleteObject(id)
         })
         
         this.socket.on("send bullet",(data: any)=>{
@@ -59,6 +62,14 @@ export class RealTimeGame{
         
         this.socket.on("win", ()=>{
             alert("Win")
+        })
+
+        this.socket.on("start game", ()=>{
+            this.onStartGame()
+        })
+
+        this.socket.on("game data", (data: {fire: boolean,start: boolean})=>{
+            this.getGameData(data)
         })
     }
 

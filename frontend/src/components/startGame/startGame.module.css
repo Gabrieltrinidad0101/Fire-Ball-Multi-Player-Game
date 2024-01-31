@@ -1,5 +1,4 @@
 .container {
-    background: #00000080;
     width: 100vw;
     height: 100vh;
     position: fixed;
@@ -12,6 +11,9 @@
     align-items: center;
 }
 
+.background{
+    background: #00000080;
+}
 
 .btn {
     display: flex;

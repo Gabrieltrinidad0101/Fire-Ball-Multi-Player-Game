@@ -2,7 +2,7 @@ import { Game } from "./game/game";
 import {RealTimeGame}  from "./realTime/realTime";
 
 
-export const StartGame = (gameId: string): RealTimeGame | undefined => {
+export const StartGame = (gameId: string): RealTimeGame => {
     const game = new Game()
     game.context()
     const realTime = new RealTimeGame(gameId)
