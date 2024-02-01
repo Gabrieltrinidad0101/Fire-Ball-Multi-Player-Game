@@ -19,6 +19,7 @@ type Player struct {
 
 type ApiPlayer interface {
 	GetData(tokenPlayer string) (*Player, error)
+	Win(playerId uint)
 }
 
 type ModelGame interface {
@@ -26,6 +27,7 @@ type ModelGame interface {
 	FindByPlayerId(int) *Game
 	Update(*Game)
 	FindAll() *[]Game
+	Delete(gameUuid string)
 }
 
 type Response struct {
@@ -80,4 +82,9 @@ func (g *ServiceGame) FindAll() Response {
 		StatusCode: 200,
 		Message:    game,
 	}
+}
+
+func (g *ServiceGame) DeleteGame(playerId uint, gameUuid string) {
+	g.modelGame.Delete(gameUuid)
+	g.apiPlayer.Win(playerId)
 }

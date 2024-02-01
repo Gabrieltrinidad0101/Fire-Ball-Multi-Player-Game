@@ -26,6 +26,12 @@ func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 	}
 }
 
+func MicroservicesAuth(next echo.HandlerFunc) echo.HandlerFunc {
+	return func(ctx echo.Context) error {
+		return microservicesAuth(ctx, next)
+	}
+}
+
 func userAuth(ctx echo.Context, next echo.HandlerFunc) error {
 	tokenString := ctx.Request().Header.Get("x-token")
 

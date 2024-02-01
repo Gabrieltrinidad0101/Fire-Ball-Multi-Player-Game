@@ -61,12 +61,19 @@ func (p *PlayerController) GetDataFromUser(ctx echo.Context) error {
 }
 
 func (p *PlayerController) SetGame(ctx echo.Context) error {
-	stringGameId := ctx.QueryParam("gameId")
+	stringGameId := ctx.QueryParam("gameUuid")
 	stringPlayerId := ctx.QueryParam("playerId")
 	if stringPlayerId == "" {
 		player := ctx.Get("player").(*utils.PlayerJwt)
 		stringPlayerId = fmt.Sprint(player.Player.Id)
 	}
-	response := p.ServicePlayer.SetGame(stringGameId, stringPlayerId)
+	response := p.ServicePlayer.SetGame(stringPlayerId, stringGameId)
+	return ctx.JSON(response.StatusCode, response)
+}
+
+func (p *PlayerController) Winner(ctx echo.Context) error {
+	var player *services.Player
+	ctx.Bind(player)
+	response := p.ServicePlayer.Winner(player.Id)
 	return ctx.JSON(response.StatusCode, response)
 }

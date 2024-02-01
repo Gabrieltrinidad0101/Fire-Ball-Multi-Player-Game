@@ -7,6 +7,7 @@ import {socketIO} from "./parseSocketIO"
 export class RealTimeGame{
     socket: SocketIO.Server
     onStartGame = (_: Player) =>{}
+    onDisconnect = () =>{}
     getGameData = (_: {fire: boolean,start: boolean}) =>{}
     
     constructor(gameId: string){
@@ -59,6 +60,7 @@ export class RealTimeGame{
         
         this.socket.on("disconnection", (data: any)=>{
             Game.objects.delete(data.id)
+            if (data.id == id) window.location.href = "/home" 
         })
         
         this.socket.on("win", ()=>{
@@ -69,8 +71,20 @@ export class RealTimeGame{
             this.onStartGame(player)
         })
 
+        this.socket.on("connect_error", ()=>{
+            window.location.href = "/home"
+        })
+
         this.socket.on("game data", (data: {fire: boolean,start: boolean})=>{
             this.getGameData(data)
+        })
+
+        this.socket.on("force disconnect", (playerUuid: string)=>{
+            if (playerUuid == id) {
+                window.location.href = "/home"
+                this.onDisconnect()
+            }
+            if (playerUuid == "force") window.location.href = "/home"
         })
     }
 

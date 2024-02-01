@@ -6,7 +6,6 @@ export const socketIO = (gameUuid: string) =>socket(constants.serverUrlGame, {
     transports : ['websocket'],
     query: {
         gameUuid,
-        "playerId": constants.playerId(),
         "x-token": constants.xToken()
     }
 }) as Server

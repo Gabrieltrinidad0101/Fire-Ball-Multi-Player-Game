@@ -31,3 +31,8 @@ func (m ModelGame) FindAll() *[]services.Game {
 	db.Find(&games).Where("status != finished")
 	return &games
 }
+
+func (m ModelGame) Delete(gameUuid string) {
+	var games services.Game
+	db.Model(&games).Delete("game_uuid == ?", gameUuid)
+}

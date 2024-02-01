@@ -10,9 +10,11 @@ import (
 type PlayerModel interface {
 	Insert(*Player)
 	Find(*Player) Player
+	FindById(uint) *Player
 	FindByGame(string) []Player
 	FindAll() []Player
-	SetGame(playerId uint, GameId uint)
+	SetGame(playerId uint, GameUuid string)
+	Winner(playerId uint)
 }
 
 type Token interface {
@@ -20,10 +22,11 @@ type Token interface {
 }
 
 type Player struct {
-	Name     string `json:"name",validate:"required"`
-	Password string `json:"password"validate:"required"`
-	Id       uint   `json:"id"`
-	GameId   int    `json:"gameId"`
+	Name      string `json:"name",validate:"required"`
+	Password  string `json:"password"validate:"required"`
+	Id        uint   `json:"id"`
+	GameUuid  string `json:"gameuuid"`
+	Victories int    `json:"victories"`
 }
 
 func NewPlayer(playerModel PlayerModel, token Token) ServicePlayer {
@@ -124,39 +127,34 @@ func (u *ServicePlayer) FindAllPlayers() Response {
 	}
 }
 
-func (u *ServicePlayer) SetGame(stringPlayerId, stringGameId string) Response {
-	// If the player diead the game id will be 0
-	gameIdInt, err := strconv.Atoi(stringGameId)
+func (u *ServicePlayer) SetGame(stringPlayerId, stringGameUuid string) Response {
+	playerId, err := strconv.ParseUint(stringPlayerId, 10, 64)
 	if err != nil {
 		response := Response{
 			StatusCode: http.StatusBadRequest,
-			Message:    "Invalid game id",
+			Message:    "Invalid player id",
 		}
 		return response
 	}
-
-	playerIdInt, err := strconv.Atoi(stringPlayerId)
-	if err != nil {
-		response := Response{
-			StatusCode: http.StatusBadRequest,
-			Message:    "Invalid game id",
-		}
-		return response
-	}
-	playerId := uint(playerIdInt)
-	gameId := uint(gameIdInt)
-	if gameId != 0 {
-		player := u.PlayerModel.Find(&Player{
-			Id: playerId,
-		})
-		if player.GameId != 0 {
+	// If the player dead the game id will be ""
+	if stringGameUuid != "" {
+		player := u.PlayerModel.FindById(uint(playerId))
+		if player.GameUuid != "" {
 			return Response{
 				StatusCode: http.StatusBadRequest,
 				Message:    "You are already into game",
 			}
 		}
 	}
-	u.PlayerModel.SetGame(playerId, gameId)
+	u.PlayerModel.SetGame(uint(playerId), stringGameUuid)
+	return Response{
+		StatusCode: 200,
+		Message:    "OK",
+	}
+}
+
+func (u *ServicePlayer) Winner(playerId uint) Response {
+	u.PlayerModel.Winner(playerId)
 	return Response{
 		StatusCode: 200,
 		Message:    "OK",

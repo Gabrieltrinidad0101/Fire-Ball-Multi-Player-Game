@@ -16,7 +16,7 @@ type GameModel interface {
 }
 
 type PlayerApi interface {
-	SetGame(uint, uint)
+	SetGame(uint, string)
 }
 
 type SocketServer struct {
@@ -33,7 +33,18 @@ func NewSocketServer(gameModel GameModel, playerApi PlayerApi) *SocketServer {
 
 type PlayerSocket struct {
 	socketId string
-	data     interface{}
+	PlayerId int
+	data     PlayerSocketData
+}
+
+type PlayerSocketData struct {
+	X      float64 `json:"x"`
+	Y      float64 `json:"y"`
+	W      float64 `json:"w"`
+	H      float64 `json:"h"`
+	ImageW float64 `json:"imageW"`
+	Image  string  `json:"image"`
+	Id     string  `json:"id"`
 }
 
 type Game struct {
@@ -77,10 +88,28 @@ func (s *SocketServer) LoadServerSocket() *socketio.Server {
 	}
 	server.On("connection", func(so socketio.Socket) {
 		gameUuid := so.Request().URL.Query().Get(("gameUuid"))
-		playerId := so.Request().URL.Query().Get(("playerId"))
+		playerId, err := strconv.Atoi(so.Request().URL.Query().Get(("playerId")))
+		if err != nil {
+			fmt.Print(err)
+		}
+		game := games[gameUuid]
+
+		if game.Fire {
+			so.Emit("force disconnect", "force")
+			so.Disconnect()
+			return
+		}
+
+		//if the player has connect disconnect the older
+		for _, player := range *game.Players {
+			if player.PlayerId == playerId {
+				so.BroadcastTo(gameUuid, "force disconnect", player.data.Id)
+				break
+			}
+		}
 
 		so.Join(gameUuid)
-		game := games[gameUuid]
+		s.playerApi.SetGame(uint(playerId), gameUuid)
 
 		so.On("move user", func(data interface{}) {
 			if !games[gameUuid].Fire {
@@ -93,10 +122,20 @@ func (s *SocketServer) LoadServerSocket() *socketio.Server {
 			so.BroadcastTo(gameUuid, "user collision", data)
 		})
 
-		so.On("new player", func(data interface{}) {
+		so.On("new player", func(data map[string]interface{}) {
+			playerData := PlayerSocketData{
+				X:      data["x"].(float64),
+				Y:      data["y"].(float64),
+				H:      data["h"].(float64),
+				Image:  data["image"].(string),
+				ImageW: data["imageW"].(float64),
+				W:      data["w"].(float64),
+				Id:     data["id"].(string),
+			}
 			playerSocket := PlayerSocket{
 				so.Id(),
-				data,
+				playerId,
+				playerData,
 			}
 			*game.Players = append(*game.Players, playerSocket)
 			so.BroadcastTo(gameUuid, "new player", data)
@@ -111,6 +150,9 @@ func (s *SocketServer) LoadServerSocket() *socketio.Server {
 		})
 
 		so.On("start game", func() {
+			if len(*game.Players) <= 1 {
+				return
+			}
 			game.Fire = true
 			server.BroadcastTo(gameUuid, "start game")
 		})
@@ -139,7 +181,7 @@ func (s *SocketServer) LoadServerSocket() *socketio.Server {
 
 		so.Emit("game data", map[string]interface{}{
 			"fire":  game.Fire,
-			"start": fmt.Sprint(game.PlayerId) == playerId,
+			"start": game.PlayerId == playerId,
 		})
 
 		so.On("disconnection", func() {
@@ -148,12 +190,7 @@ func (s *SocketServer) LoadServerSocket() *socketio.Server {
 			for _, player := range *players {
 				if player.socketId == so.Id() {
 					server.BroadcastTo(gameUuid, "disconnection", player.data)
-					id, err := strconv.Atoi(playerId)
-					if err != nil {
-						fmt.Print(err)
-						continue
-					}
-					s.playerApi.SetGame(uint(id), 0)
+					s.playerApi.SetGame(uint(playerId), "")
 					continue
 				}
 				playersNoDead = append(playersNoDead, player)

@@ -68,6 +68,7 @@ export default function Home() {
                   <div key={player.id}>
                     <img src={`https://api.dicebear.com/6.x/personas/svg?seed=${player.name}`} alt="" />
                     <h1>{player.name}</h1>
+                    <p>{player.victories}</p>
                   </div>
                 )
               }
