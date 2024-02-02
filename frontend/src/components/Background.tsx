@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import { ReactNode } from 'react'
 import BackgroundCss from './Background.module.css'
 export default function Background({children}: {children: ReactNode} ): JSX.Element {
   return (

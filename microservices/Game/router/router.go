@@ -13,8 +13,7 @@ func Init(e *echo.Echo) {
 	socket := configuration.SocketController()
 	e.HideBanner = true
 	serverSocket := socket.LoadServerSocket()
-	e.Any("/socket.io/", socket.RealTimeServer(serverSocket))
-
+	e.Any("/socket.io/", socket.RealTimeServer(serverSocket), middleware.Auth)
 	game := e.Group("/game")
 	game.GET("/findAll", gameController.FindAll, middleware.Auth)
 	game.POST("/new", gameController.New, middleware.Auth)

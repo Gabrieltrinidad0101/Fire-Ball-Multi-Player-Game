@@ -17,6 +17,7 @@ export const AuthenticationProvider = (): JSX.Element => {
       })
       const noHasAccount = result?.message?.id === undefined || isNullEmptyUndefinedOrNan(result?.message?.id) || result?.message?.id <= 0
       setAuth(noHasAccount)
+      localStorage.setItem("playerId",result?.message?.id.toString() ?? "0")
       return noHasAccount 
     } catch (error) {
       console.log(error)

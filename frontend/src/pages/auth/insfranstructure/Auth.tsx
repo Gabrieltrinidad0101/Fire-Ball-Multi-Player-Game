@@ -6,7 +6,7 @@ import { Authentication } from '../application/auth'
 import { Toast, customFecth } from '../../../share/insfranstructure/dependencies'
 import {  Link, useNavigate } from 'react-router-dom'
 export default function Auth({auth}: {auth: boolean}) {
-  const [player,setPlayer] = useState<IPlayer>({name: "",password: "",id: 0})
+  const [player,setPlayer] = useState<IPlayer>({name: "",password: "",id: 0,victories: 0})
   const navigate = useNavigate()
   const onChange = (e: ChangeEvent<HTMLInputElement>)=>{
     const {name,value} = e.target

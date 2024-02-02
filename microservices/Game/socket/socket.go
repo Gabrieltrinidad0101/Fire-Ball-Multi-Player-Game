@@ -72,9 +72,6 @@ func (s *SocketServer) RealTimeServer(socketServer *socketio.Server) func(contex
 				Players:  &[]PlayerSocket{},
 			}
 		}
-		rawQuery := context.Request().URL.Query()
-		rawQuery.Add("playerId", fmt.Sprint(gameData.PlayerId))
-		context.Request().URL.RawQuery = rawQuery.Encode()
 		socketServer.ServeHTTP(context.Response(), context.Request())
 		return nil
 	}

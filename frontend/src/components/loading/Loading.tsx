@@ -1,4 +1,3 @@
-import React from 'react'
 import LoadingCss from './Loading.module.css'
 export default function Loading (): JSX.Element {
   return (
