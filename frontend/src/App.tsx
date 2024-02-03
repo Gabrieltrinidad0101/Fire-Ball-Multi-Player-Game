@@ -12,11 +12,11 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>  
-          <Route path="/Fire-Ball-Multi-Player-Game/Login" element={<Auth auth={true} />}></Route>
-          <Route path="/Fire-Ball-Multi-Player-Game/Register" element={<Auth auth={false}/>}></Route>
+          <Route path="/login" element={<Auth auth={true} />}></Route>
+          <Route path="/register" element={<Auth auth={false}/>}></Route>
           <Route element={<AuthenticationProvider/>} >
-            <Route path="/Fire-Ball-Multi-Player-Game/Home" element={<Home />}></Route>
-            <Route path="/Fire-Ball-Multi-Player-Game/Game/:gameId" element={<Game />}></Route>
+            <Route path="/home" element={<Home />}></Route>
+            <Route path="/game/:gameId" element={<Game />}></Route>
           </Route>
         </Routes>
         <ToastContainer />
