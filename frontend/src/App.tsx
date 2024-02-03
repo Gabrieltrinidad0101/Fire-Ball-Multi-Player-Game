@@ -14,6 +14,7 @@ function App() {
         <Routes>  
           <Route path="/login" element={<Auth auth={true} />}></Route>
           <Route path="/register" element={<Auth auth={false}/>}></Route>
+          <Route path="*" element={<Auth auth={false}/>}></Route>
           <Route element={<AuthenticationProvider/>} >
             <Route path="/home" element={<Home />}></Route>
             <Route path="/game/:gameId" element={<Game />}></Route>
