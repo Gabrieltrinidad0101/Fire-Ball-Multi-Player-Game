@@ -1,8 +1,11 @@
 package model
 
 import (
+	"fmt"
 	database "user/Database"
 	"user/services"
+
+	"gorm.io/gorm"
 )
 
 type PlayerModel struct{}
@@ -43,6 +46,6 @@ func (u PlayerModel) FindAll() []services.Player {
 }
 
 func (u PlayerModel) Winner(playerId uint) {
-	var player services.Player
-	db.Model(&player).Where("id = ?", playerId).Update("victories = victories + 1", 0)
+	err := db.Model(services.Player{}).Where("id = ?", playerId).UpdateColumn("victories", gorm.Expr("victories + ?", 1))
+	fmt.Print(err)
 }

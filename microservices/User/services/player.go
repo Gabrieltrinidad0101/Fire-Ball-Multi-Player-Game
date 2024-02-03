@@ -23,10 +23,10 @@ type Token interface {
 
 type Player struct {
 	Name      string `json:"name",validate:"required"`
-	Password  string `json:"password"validate:"required"`
+	Password  string `json:"password",validate:"required"`
 	Id        uint   `json:"id"`
 	GameUuid  string `json:"gameuuid"`
-	Victories int    `json:"victories"`
+	Victories int    `json:"victories"gorm:"default:0"`
 }
 
 func NewPlayer(playerModel PlayerModel, token Token) ServicePlayer {
@@ -153,8 +153,16 @@ func (u *ServicePlayer) SetGame(stringPlayerId, stringGameUuid string) Response 
 	}
 }
 
-func (u *ServicePlayer) Winner(playerId uint) Response {
-	u.PlayerModel.Winner(playerId)
+func (u *ServicePlayer) Winner(stringPlayerId string) Response {
+	playerId, err := strconv.ParseUint(stringPlayerId, 10, 64)
+	if err != nil {
+		response := Response{
+			StatusCode: http.StatusBadRequest,
+			Message:    "Invalid player id",
+		}
+		return response
+	}
+	u.PlayerModel.Winner(uint(playerId))
 	return Response{
 		StatusCode: 200,
 		Message:    "OK",

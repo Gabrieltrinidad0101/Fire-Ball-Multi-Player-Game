@@ -18,7 +18,10 @@ func Auth(next echo.HandlerFunc) echo.HandlerFunc {
 		tokenString := ctx.Request().Header.Get("x-token")
 
 		if tokenString == "" {
-			return ctx.JSON(errorResponse.StatusCode, errorResponse)
+			tokenString = ctx.Request().URL.Query().Get("x-token")
+			if tokenString == "" {
+				return ctx.JSON(errorResponse.StatusCode, errorResponse)
+			}
 		}
 
 		apisPlayer := apis.ApisPlayer{}

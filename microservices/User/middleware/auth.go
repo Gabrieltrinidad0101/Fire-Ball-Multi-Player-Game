@@ -57,11 +57,7 @@ func userAuth(ctx echo.Context, next echo.HandlerFunc) error {
 
 func microservicesAuth(ctx echo.Context, next echo.HandlerFunc) error {
 	tokenString := ctx.Request().Header.Get("x-token-microservice")
-	decodedBytes, err := base64.StdEncoding.DecodeString(tokenString)
-	if err != nil {
-		return ctx.JSON(errorResponse.StatusCode, errorResponse)
-	}
-
+	decodedBytes, _ := base64.StdEncoding.DecodeString(tokenString)
 	decodedString := string(decodedBytes)
 	authData := strings.Split(decodedString, ":")
 

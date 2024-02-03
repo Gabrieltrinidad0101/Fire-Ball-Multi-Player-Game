@@ -83,9 +83,13 @@
 
 .players > div{
     display: grid;
-    grid-template-columns: 20% 80%;
+    grid-template-columns: 20% 60% 20%;
     gap: 10px;
     color: white;
     align-items: center;
     margin-top: 7px;
+}
+
+.players p{
+    font-size: 25px;
 }

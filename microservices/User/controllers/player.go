@@ -72,8 +72,7 @@ func (p *PlayerController) SetGame(ctx echo.Context) error {
 }
 
 func (p *PlayerController) Winner(ctx echo.Context) error {
-	var player *services.Player
-	ctx.Bind(player)
-	response := p.ServicePlayer.Winner(player.Id)
+	playerId := ctx.QueryParam("playerId")
+	response := p.ServicePlayer.Winner(playerId)
 	return ctx.JSON(response.StatusCode, response)
 }

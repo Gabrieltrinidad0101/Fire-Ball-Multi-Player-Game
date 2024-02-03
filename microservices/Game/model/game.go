@@ -33,6 +33,6 @@ func (m ModelGame) FindAll() *[]services.Game {
 }
 
 func (m ModelGame) Delete(gameUuid string) {
-	var games services.Game
-	db.Model(&games).Delete("game_uuid == ?", gameUuid)
+	db = db.Debug()
+	db.Where("uuid = ?", gameUuid).Delete(&services.Game{})
 }

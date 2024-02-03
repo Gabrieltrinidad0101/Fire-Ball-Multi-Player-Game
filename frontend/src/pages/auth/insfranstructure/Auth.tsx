@@ -33,7 +33,7 @@ export default function Auth({auth}: {auth: boolean}) {
             </div>
             <div className={AuthCss.form}>
               <div className={AuthCss.inputBox}>
-                <input type="text" name="name" required onChange={onChange} /> <i>Player Name</i>
+                <input type="text" name="name" maxLength={12} required onChange={onChange} /> <i>Name</i>
               </div>
               <div className={AuthCss.inputBox}>
                 <input type="password" name='password' required onChange={onChange} /> <i>Password</i>

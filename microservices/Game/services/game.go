@@ -9,7 +9,6 @@ type Game struct {
 	gorm.Model
 	Uuid     string `json:"uuid"`
 	PlayerId int    `json:"player.Id"`
-	Status   string `json:"status"`
 }
 
 type Player struct {
@@ -57,8 +56,7 @@ func (g *ServiceGame) New(player *Player) Response {
 	}
 	newGame := &Game{}
 	newGame.PlayerId = player.Id
-	newGame.Uuid = uuid.NewString()
-	newGame.Status = "loddy"
+	newGame.Uuid = uuid.NewString()[0:10]
 	g.modelGame.Insert(newGame)
 	return Response{
 		StatusCode: 200,
@@ -68,7 +66,6 @@ func (g *ServiceGame) New(player *Player) Response {
 
 func (g *ServiceGame) Start(player *Player) Response {
 	game := g.modelGame.FindByPlayerId(player.Id)
-	game.Status = "started"
 	g.modelGame.Update(game)
 	return Response{
 		StatusCode: 200,
@@ -86,5 +83,4 @@ func (g *ServiceGame) FindAll() Response {
 
 func (g *ServiceGame) DeleteGame(playerId uint, gameUuid string) {
 	g.modelGame.Delete(gameUuid)
-	g.apiPlayer.Win(playerId)
 }

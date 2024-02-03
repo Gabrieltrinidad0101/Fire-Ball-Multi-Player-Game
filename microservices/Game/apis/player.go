@@ -1,7 +1,6 @@
 package apis
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -39,23 +38,14 @@ func (a ApisPlayer) SetGame(playerId uint, gameId string) {
 func (a ApisPlayer) Win(playerId uint) {
 	configuration := utils.LoadEnviroments()
 
-	url := fmt.Sprintf("%s/player/win", configuration.PlayerUrl)
-	player := services.Player{
-		Id: int(playerId),
-	}
+	url := fmt.Sprintf("%s/player/winner?playerId=%d", configuration.PlayerUrl, playerId)
 
-	jsonData, err := json.Marshal(player)
+	request, err := http.NewRequest("PUT", url, nil)
 	if err != nil {
-		fmt.Println("Error marshaling JSON:", err)
+		fmt.Println("Error creating PUT request:", err)
 		return
 	}
-
-	request, err := http.NewRequest("POST", url, bytes.NewBuffer(jsonData))
-	if err != nil {
-		fmt.Println("Error creating POST request:", err)
-		return
-	}
-	request.Header.Set("x-token-microservices", configuration.TokenMicroservice)
+	request.Header.Set("x-token-microservice", configuration.TokenMicroservice)
 	client := http.Client{}
 	response, err := client.Do(request)
 	if err != nil {

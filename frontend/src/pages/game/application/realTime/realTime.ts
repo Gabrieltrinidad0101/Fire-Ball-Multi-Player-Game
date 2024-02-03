@@ -7,9 +7,9 @@ import {socketIO} from "./parseSocketIO"
 export class RealTimeGame{
     socket: SocketIO.Server
     onStartGame = (_: Player) =>{}
-    onDisconnect = () =>{}
     getGameData = (_: {fire: boolean,start: boolean}) =>{}
-    
+    onWin = ()=>{}
+    onDead = ()=>{}
     constructor(gameId: string){
         this.socket = socketIO(gameId)
     }
@@ -37,8 +37,12 @@ export class RealTimeGame{
             })
         })
         
-        this.socket.on("delete object", (id: string)=>{
-            Game.deleteObject(id)
+        this.socket.on("delete object", (playerId: string)=>{
+            Game.deleteObject(playerId)
+            this.onDead()
+            if (id === playerId){
+                window.location.href = "/home" 
+            }
         })
         
         this.socket.on("send bullet",(data: any)=>{
@@ -60,11 +64,15 @@ export class RealTimeGame{
         
         this.socket.on("disconnection", (data: any)=>{
             Game.objects.delete(data.id)
-            if (data.id == id) window.location.href = "/home" 
+            if (data.id == id) {
+                this.onDead()
+                window.location.href = "/home"
+            } 
         })
         
         this.socket.on("win", ()=>{
-            alert("Win")
+            this.onWin()
+            this.socket.close()
         })
 
         this.socket.on("start game", ()=>{
@@ -72,7 +80,9 @@ export class RealTimeGame{
         })
 
         this.socket.on("connect_error", ()=>{
+            this.onDead()
             window.location.href = "/home"
+            this.socket.close()
         })
 
         this.socket.on("game data", (data: {fire: boolean,start: boolean})=>{
@@ -80,11 +90,11 @@ export class RealTimeGame{
         })
 
         this.socket.on("force disconnect", (playerUuid: string)=>{
-            if (playerUuid == id) {
+            if (playerUuid == id || playerUuid == "force") {
+                this.onDead()
                 window.location.href = "/home"
-                this.onDisconnect()
+                this.socket.close()
             }
-            if (playerUuid == "force") window.location.href = "/home"
         })
     }
 

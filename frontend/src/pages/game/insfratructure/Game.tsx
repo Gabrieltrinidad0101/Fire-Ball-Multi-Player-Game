@@ -6,6 +6,7 @@ import Background from "../../../components/Background"
 import { useNavigate, useParams } from "react-router-dom"
 import { RealTimeGame } from "../application/realTime/realTime"
 import wait from "../../../share/application/wait"
+import { Toast } from "../../../share/insfranstructure/toast"
 
 let realTimeGame: RealTimeGame | null = null
 
@@ -37,10 +38,12 @@ export default function Game(): JSX.Element {
       setTotalPlayers(total)
     })
 
+    const question = (event: any) => {
+      event.returnValue = "Are you sure you want to leave? If you leave, you're going to die";
+    }
+
     realTimeGame.onStartGame = async (player) => {
-      window.addEventListener('beforeunload', event => {
-        event.returnValue = "Are you sure you want to leave? If you leave, you're going to die";
-      });
+      window.addEventListener('beforeunload',question);
       setGameData(prevStart => ({ ...prevStart, ["fire"]: true }))
       for (let i = 10; i > 0; i--) {
         await wait(1000)
@@ -55,6 +58,16 @@ export default function Game(): JSX.Element {
     }
 
     realTimeGame.initial()
+
+    realTimeGame.onDead = ()=>{
+      window.removeEventListener('beforeunload',question);
+    }
+
+    realTimeGame.onWin = ()=>{
+      Toast.sucess("Winner")
+      window.removeEventListener('beforeunload',question);
+      navigate("/home")
+    }
   }
 
   useEffect(() => {
