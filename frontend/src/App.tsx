@@ -10,7 +10,7 @@ function App() {
 
   return (
     <>
-      <BrowserRouter basename="Fire-Ball-Multi-Player-Game">
+      <BrowserRouter basename="/Fire-Ball-Multi-Player-Game">
         <Routes>  
           <Route path="/login" element={<Auth auth={true} />}></Route>
           <Route path="/register" element={<Auth auth={false}/>}></Route>
