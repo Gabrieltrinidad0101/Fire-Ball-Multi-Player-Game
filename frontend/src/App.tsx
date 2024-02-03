@@ -12,7 +12,7 @@ function App() {
     <>
       <BrowserRouter>
         <Routes>  
-          <Route path="/login" element={<Auth auth={true} />}></Route>
+          <Route path="/Fire-Ball-Multi-Player-Game/login" element={<Auth auth={true} />}></Route>
           <Route path="/register" element={<Auth auth={false}/>}></Route>
           <Route path="*" element={<Auth auth={false}/>}></Route>
           <Route element={<AuthenticationProvider/>} >
