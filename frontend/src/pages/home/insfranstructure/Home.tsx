@@ -28,13 +28,15 @@ export default function Home() {
       console.log(error)
     })
 
-    getGames()
-      .then(()=>{
-        console.log(games)
+    setInterval(()=>{
+      getGames()
+        .then(()=>{
+          console.log(games)
+        })
+      .catch((error: any) => {
+        console.log(error)
       })
-    .catch((error: any) => {
-      console.log(error)
-    })
+    },3000)
   }, [])
 
   const playToGame = (gameUuid: string)=>{
