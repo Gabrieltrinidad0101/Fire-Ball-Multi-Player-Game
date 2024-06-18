@@ -196,6 +196,7 @@ export class Player extends GameObject {
     camera(playerId: string){
         if(playerId !== this.id || Game.canvasContainer === null)  return
         if(this.x <= 1000) Game.canvasContainer.scrollLeft = 0
-        else if(this.x <= 2000) Game.canvasContainer.scrollLeft = Game.canvasContainer.scrollWidth
+        else if(this.x <= 2000) Game.canvasContainer.scrollLeft = 1000
+        else if(this.x <= 3000) Game.canvasContainer.scrollLeft = Game.canvasContainer.scrollWidth
     }
 }

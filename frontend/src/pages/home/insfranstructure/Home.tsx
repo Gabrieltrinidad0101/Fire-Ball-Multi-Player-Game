@@ -29,6 +29,7 @@ export default function Home() {
     })
 
     setInterval(()=>{
+      if(!window.location.href.toLocaleLowerCase().includes("home")) return
       getGames()
         .then(()=>{
           console.log(games)

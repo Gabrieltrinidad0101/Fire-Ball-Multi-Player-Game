@@ -20,6 +20,9 @@ export class RealTimeGame{
         this.socket.emit("new player",playerData)
         const player = new Player(this.socket,playerData,true);
 
+        new GameObject({x:2700,y: 300,w: 300,h:30,imageW: 300, imageH: 120,image: "object.png",type: "object"})
+        new GameObject({x:2500,y: 200,w: 300,h:30,imageW: 300, imageH: 120,image: "object.png",type: "object"})
+        new GameObject({x:2200,y: 200,w: 300,h:30,imageW: 300, imageH: 120,image: "object.png",type: "object"})
         new GameObject({x:1500,y: 200,w: 300,h:30,imageW: 300, imageH: 120,image: "object.png",type: "object"})
         new GameObject({x:1400,y: 300,w: 300,h:30,imageW: 300, imageH: 120,image: "object.png",type: "object"})
         new GameObject({x:1000,y: 300,w: 300,h:30,imageW: 300, imageH: 120,image: "object.png",type: "object"})
