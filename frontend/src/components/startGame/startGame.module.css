@@ -85,10 +85,17 @@
 .players{
     font-size: 50px;
     color: #fff;
+    text-align: center;
 }
 
 
 .wait{
     font-size: 30px;
     color: #fff;
+}
+
+@media screen and (max-width: 1000px) {
+    .players {
+        font-size: 30px;
+    }
 }

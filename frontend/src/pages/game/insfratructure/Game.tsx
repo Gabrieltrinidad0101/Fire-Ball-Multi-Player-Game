@@ -85,8 +85,14 @@ export default function Game(): JSX.Element {
   return (
     <Background>
       <StartGameComponet fire={gameData.fire} onClick={onClickStartGame} totalPlayers={totalPlayers} canStartGame={gameData.start} />
-      <div className="canvasContiner">
+      <div className={`canvasContiner`}>
         <canvas width="3000px" height="500px" id="game"></canvas>
+      </div>
+      <div className="mobile">
+        <div className="left">left</div>
+        <div className="up">Up</div>
+        <div className="enter">enter</div>
+        <div className="">Rigth</div>
       </div>
       <div className="counter">
         <h1>{count}</h1>

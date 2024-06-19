@@ -4,7 +4,7 @@ export default function StartGame({totalPlayers,canStartGame,onClick,fire}: {fir
   return (
     <div className={`${StartGameCss.container} ${fire ? "" :StartGameCss.background}`}>
         <div className={StartGameCss.players}>
-            <h1>PLAYERS: {totalPlayers}</h1>
+            <h1><span>PLAYERS:</span> {totalPlayers}</h1>
         </div>
         {
         !fire && <div>

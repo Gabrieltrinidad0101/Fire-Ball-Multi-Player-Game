@@ -16,7 +16,7 @@ export class RealTimeGame{
 
     initial(){
         const id = Math.random().toString() + Math.random().toString()
-        const playerData = {x:300,y:Game.canvas.height - 60,w: 35,h: 75,imageW: 75, image: "playerRigth.png",id}
+        const playerData = {x:50,y:Game.canvas.height - 60,w: 35,h: 75,imageW: 75, image: "playerRigth.png",id}
         this.socket.emit("new player",playerData)
         const player = new Player(this.socket,playerData,true);
 

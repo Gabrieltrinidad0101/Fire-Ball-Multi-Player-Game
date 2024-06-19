@@ -33,3 +33,41 @@ canvas{
     color: white;
     font-size: 50px;
 }
+
+.mobile{
+    position: fixed;
+    top: 550px;
+    width: 90%;
+    height: calc(100vh - 550px);
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas:
+            'space1 up space2'
+            'left enter rigth';    
+}
+
+.up{
+    grid-area: up;
+}
+
+.enter{
+    grid-area: enter;
+}
+
+.left{
+    grid-area: left;
+}
+
+.rigth{
+    grid-area: rigth;
+}
+
+@media screen and (max-width: 1000px ){
+    .canvasContiner{
+        width: 100%;
+        position: fixed;
+        top: 0px;
+        left: 0px;
+    }
+}
