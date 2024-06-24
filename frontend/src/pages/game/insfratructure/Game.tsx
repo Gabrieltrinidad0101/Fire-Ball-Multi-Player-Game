@@ -89,10 +89,10 @@ export default function Game(): JSX.Element {
         <canvas width="3000px" height="500px" id="game"></canvas>
       </div>
       <div className="mobile">
-        <div className="left">left</div>
-        <div className="up">Up</div>
-        <div className="enter">enter</div>
-        <div className="">Rigth</div>
+        <div className="left">{"<"}</div>
+        <div className="up">{"^"}</div>
+        <div className="enter">Fire</div>
+        <div className="rigth">{">"}</div>
       </div>
       <div className="counter">
         <h1>{count}</h1>

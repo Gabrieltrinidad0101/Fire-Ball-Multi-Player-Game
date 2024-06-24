@@ -1,0 +1,12 @@
+services:
+  fire_ball_game:
+    build: .
+    ports:
+      - "5001:5001"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      
+networks:
+  default:
+    name: development
+    external: true
