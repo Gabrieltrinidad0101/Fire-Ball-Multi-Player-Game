@@ -14,7 +14,7 @@ export default function StartGame({totalPlayers,canStartGame,onClick,fire}: {fir
                 <img width="100px" src={Logo} alt="" />
                 <span className={StartGameCss.now}>now!</span>
                 <span className={StartGameCss.play}>play</span>
-            </button> : <h1 className={StartGameCss.wait} > Wait for the game start</h1>
+            </button> : <h1 className={StartGameCss.wait} > Wait for the game to start</h1>
             }
         </div>
         }

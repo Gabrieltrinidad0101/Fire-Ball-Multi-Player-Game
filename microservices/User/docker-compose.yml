@@ -5,6 +5,10 @@ services:
       - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
     ports:
       - "8000:8000"
+  fire_ball_user_pro:
+    build: .
+    environment:
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
 
 networks:
   default:

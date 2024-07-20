@@ -44,7 +44,7 @@ export class RealTimeGame{
             Game.deleteObject(playerId)
             this.onDead()
             if (id === playerId){
-                window.location.href = "/home" 
+                window.location.href = "#/home" 
             }
         })
         
@@ -69,7 +69,7 @@ export class RealTimeGame{
             Game.objects.delete(data.id)
             if (data.id == id) {
                 this.onDead()
-                window.location.href = "/home"
+                window.location.href = "#/home"
             } 
         })
         
@@ -84,7 +84,7 @@ export class RealTimeGame{
 
         this.socket.on("connect_error", ()=>{
             this.onDead()
-            window.location.href = "/home"
+            window.location.href = "#/home"
             this.socket.close()
         })
 
@@ -95,7 +95,7 @@ export class RealTimeGame{
         this.socket.on("force disconnect", (playerUuid: string)=>{
             if (playerUuid == id || playerUuid == "force") {
                 this.onDead()
-                window.location.href = "/home"
+                window.location.href = "#/home"
                 this.socket.close()
             }
         })

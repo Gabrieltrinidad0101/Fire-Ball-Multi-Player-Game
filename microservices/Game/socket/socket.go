@@ -171,6 +171,7 @@ func (s *SocketServer) LoadServerSocket() *socketio.Server {
 
 			if len(*game.Players) == 1 {
 				so.BroadcastTo(gameUuid, "win")
+				s.playerApi.Win(uint(playersNoDead[0].PlayerId))
 				s.gameModel.Delete(gameUuid)
 			}
 		})
@@ -200,6 +201,7 @@ func (s *SocketServer) LoadServerSocket() *socketio.Server {
 
 			if len(playersNoDead) == 1 && game.Fire {
 				server.BroadcastTo(gameUuid, "win")
+				fmt.Print(uint(playersNoDead[0].PlayerId))
 				s.playerApi.Win(uint(playersNoDead[0].PlayerId))
 				s.gameModel.Delete(gameUuid)
 				games[gameUuid] = nil
