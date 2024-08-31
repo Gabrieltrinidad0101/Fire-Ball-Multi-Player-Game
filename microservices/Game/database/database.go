@@ -22,5 +22,6 @@ func GetConnection() *gorm.DB {
 		panic("ERROR IN THE CONNECTION")
 	}
 	db.Exec("CREATE DATABASE IF NOT EXISTS " + conf.DbName)
+	db.Exec("USE " + conf.DbName)
 	return db
 }
