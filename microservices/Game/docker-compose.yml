@@ -3,9 +3,12 @@ services:
     build: .
     ports:
       - "5001:5001"
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-      
+    env_file: .env
+  fire_ball_game_pro:
+    container_name: fire_ball_game_pro
+    build: .
+    env_file: .env
+
 networks:
   default:
     name: development

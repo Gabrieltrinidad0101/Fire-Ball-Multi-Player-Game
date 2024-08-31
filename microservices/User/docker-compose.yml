@@ -1,14 +1,13 @@
 services:
   fire_ball_user:
     build: .
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    env_file: .env
     ports:
       - "8000:8000"
   fire_ball_user_pro:
+    container_name: fire_ball_user_pro
     build: .
-    environment:
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+    env_file: .env
 
 networks:
   default:
