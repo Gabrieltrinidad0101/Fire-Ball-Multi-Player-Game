@@ -40,7 +40,7 @@ func GetConnection() *gorm.DB {
 
 	gormDB, err := gorm.Open(mysql.Open(dsn))
 	if err != nil {
-		fmt.Errorf("Error %s", error.Error())
+		fmt.Errorf("Error %s", err.Error())
 		panic("ERROR IN THE CONNECTION")
 	}
 	return gormDB
