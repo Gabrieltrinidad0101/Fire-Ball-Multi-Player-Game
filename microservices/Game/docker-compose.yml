@@ -13,5 +13,5 @@ services:
 
 networks:
   default:
-    name: development
+    name: docker-network
     external: true
