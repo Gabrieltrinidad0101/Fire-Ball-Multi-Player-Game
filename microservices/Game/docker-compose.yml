@@ -1,11 +1,13 @@
 services:
-  fire_ball_game:
+  fire_ball_game_dev:
     build: .
     ports:
       - "5001:5001"
+    volumes:
+      - ./:/go/src/app
     env_file: .env
-  fire_ball_game_pro:
-    container_name: fire_ball_game_pro
+  fire_ball_game:
+    container_name: fire_ball_game
     build: .
     env_file: .env
 

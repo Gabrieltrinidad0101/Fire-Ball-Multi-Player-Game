@@ -34,7 +34,7 @@ func LoadEnviroments() *Configuration {
 	}
 	c.DbPort = int32(port)
 	c.DbUser = os.Getenv("DB_USER")
-	c.JwtSecret = os.Getenv("JWT_SECRET")
+	c.JwtSecret = os.Getenv("TOKEN_MICROSERVICE_USER")
 	c.MicroserviceGame = os.Getenv("MICROSERVICE_GAME")
 	c.MicroserviceGamePassword = os.Getenv("MICROSERVICE_GAME_PASSWORD")
 	return c

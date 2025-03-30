@@ -33,7 +33,7 @@ func LoadEnviroments() *Configuration {
 	}
 	c.DbPort = int32(port)
 	c.DbUser = os.Getenv("DB_USER")
-	c.PlayerUrl = os.Getenv("PLAYER_URL")
+	c.PlayerUrl = os.Getenv("TOKEN_MICROSERVICE_USER")
 	c.TokenMicroservice = os.Getenv("TOKEN_MICROSERVICE")
 	return c
 }

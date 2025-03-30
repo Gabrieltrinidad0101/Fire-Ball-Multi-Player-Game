@@ -86,10 +86,9 @@ export class CustomFecth implements ICustomFecth  {
     } catch (error: unknown) {
       console.error(error)
       loaderAnimation.hide()
-      if (baseHttp.optionsFetch?.showErrors === false) return
+      if (!baseHttp.optionsFetch?.showErrors) return
       if (error instanceof AxiosError) {
         const response = error.response
-        console.log(response)
         const errorMsg = response?.data?.message ?? this.errorMsg
         Toast.error(errorMsg)
         return

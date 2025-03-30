@@ -13,7 +13,6 @@ export class HomeApp{
     }
 
     getGames = async (): Promise<Array<IGame>>=>{
-        console.log("ok")
         const response = await this.customFetch.get<Array<IGame>>("game",APIURL.findAllGames)
         return response?.message ?? []
     }

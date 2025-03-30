@@ -1,11 +1,11 @@
 services:
-  fire_ball_user:
+  fire_ball_user_dev:
     build: .
     env_file: .env
     ports:
       - "8000:8000"
-  fire_ball_user_pro:
-    container_name: fire_ball_user_pro
+  fire_ball_user:
+    container_name: fire_ball_user
     build: .
     env_file: .env
 
