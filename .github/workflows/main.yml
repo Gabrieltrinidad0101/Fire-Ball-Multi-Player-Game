@@ -11,27 +11,27 @@ jobs:
     - uses: actions/checkout@v3
     - name: create .env file game 
       run: |
-        echo "HOST=${{MYSQL_HOST}} >> ./microservices/Game/.env
-        echo "DB_PORT=${{MYSQL_PORT}} >> ./microservices/Game/.env
-        echo "DB_NAME=${{MYSQL_USERNAME}} >> ./microservices/Game/.env
-        echo "DB_PASSWORD=${{MYSQL_PASSWORD}} >> ./microservices/Game/.env
-        echo "DB_USER=${{MYSQL_USERNAME}} >> ./microservices/Game/.env
-        echo "MICROSERVICE_GAME=${{MICROSERVICE_GAME}} >> ./microservices/Game/.env
-        echo "MICROSERVICE_GAME_PASSWORD=${{MICROSERVICE_GAME_PASSWORD}} >> ./microservices/Game/.env
-        echo "TOKEN_MICROSERVICE_GAME=${{TOKEN_MICROSERVICE_GAME}} >> ./microservices/Game/.env
-        echo "MICROSERVICE_USER_URL=${{MICROSERVICE_USER_URL}} >> ./microservices/Game/.env
+        echo "DB_HOST=${{MYSQL_HOST}}" >> ./microservices/Game/.env
+        echo "DB_PORT=${{MYSQL_PORT}}" >> ./microservices/Game/.env
+        echo "DB_NAME=${{MYSQL_USERNAME}}" >> ./microservices/Game/.env
+        echo "DB_PASSWORD=${{MYSQL_PASSWORD}}" >> ./microservices/Game/.env
+        echo "DB_USER=${{MYSQL_USERNAME}}" >> ./microservices/Game/.env
+        echo "MICROSERVICE_GAME=${{MICROSERVICE_GAME}}" >> ./microservices/Game/.env
+        echo "MICROSERVICE_GAME_PASSWORD=${{MICROSERVICE_GAME_PASSWORD}}" >> ./microservices/Game/.env
+        echo "TOKEN_MICROSERVICE_GAME=${{TOKEN_MICROSERVICE_GAME}}" >> ./microservices/Game/.env
+        echo "MICROSERVICE_USER_URL=${{MICROSERVICE_USER_URL}}" >> ./microservices/Game/.env
     
     - name: create .env file user 
       run: |
-        echo "HOST=${{MYSQL_HOST}} >> ./microservices/User/.env
-        echo "DB_PORT=${{MYSQL_PORT}} >>  ./microservices/User/.env
-        echo "DB_NAME=${{MYSQL_USERNAME}} >>  ./microservices/User/.env
-        echo "DB_PASSWORD=${{MYSQL_PASSWORD}} >>  ./microservices/User/.env
-        echo "DB_USER=${{MYSQL_USERNAME}} >>  ./microservices/User/.env
-        echo "MICROSERVICE_USER=${{MICROSERVICE_USER}} >>  ./microservices/User/.env
-        echo "MICROSERVICE_USER_PASSWORD=${{MICROSERVICE_USER_PASSWORD}} >>  ./microservices/User/.env
-        echo "TOKEN_MICROSERVICE_USER=${{TOKEN_MICROSERVICE_USER}} >>  ./microservices/User/.env
-        echo "MICROSERVICE_USER_URL=${{MICROSERVICE_USER_URL}} >>  ./microservices/User/.env
+        echo "DB_HOST=${{MYSQL_HOST}}" >> ./microservices/User/.env
+        echo "DB_PORT=${{MYSQL_PORT}}" >>  ./microservices/User/.env
+        echo "DB_NAME=${{MYSQL_USERNAME}}" >>  ./microservices/User/.env
+        echo "DB_PASSWORD=${{MYSQL_PASSWORD}}" >>  ./microservices/User/.env
+        echo "DB_USER=${{MYSQL_USERNAME}}" >>  ./microservices/User/.env
+        echo "MICROSERVICE_USER=${{MICROSERVICE_USER}}" >>  ./microservices/User/.env
+        echo "MICROSERVICE_USER_PASSWORD=${{MICROSERVICE_USER_PASSWORD}}" >>  ./microservices/User/.env
+        echo "TOKEN_MICROSERVICE_USER=${{TOKEN_MICROSERVICE_USER}}" >>  ./microservices/User/.env
+        echo "MICROSERVICE_USER_URL=${{MICROSERVICE_USER_URL}}" >>  ./microservices/User/.env
 
     - name: Build the Docker image
       run: 
