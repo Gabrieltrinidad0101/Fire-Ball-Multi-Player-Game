@@ -1,7 +1,9 @@
-name: Docker Image CI
+name: Build and Deploy
+
 on:
   push:
-    branches: [ "master" ]
+    branches:
+      - master
 jobs:
   build:
     runs-on: self-hosted
