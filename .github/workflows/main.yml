@@ -13,7 +13,7 @@ jobs:
       run: |
         echo "DB_HOST=$MYSQL_HOST" >> ./microservices/Game/.env
         echo "DB_PORT=$MYSQL_PORT" >> ./microservices/Game/.env
-        echo "DB_NAME=$MYSQL_USERNAME" >> ./microservices/Game/.env
+        echo "DB_NAME=$DATABASE_NAME_GAME" >> ./microservices/Game/.env
         echo "DB_PASSWORD=$MYSQL_PASSWORD" >> ./microservices/Game/.env
         echo "DB_USER=$MYSQL_USERNAME" >> ./microservices/Game/.env
         echo "MICROSERVICE_GAME=$MICROSERVICE_GAME" >> ./microservices/Game/.env
@@ -25,6 +25,7 @@ jobs:
         MYSQL_PORT: ${{ env.MYSQL_PORT }}
         MYSQL_USERNAME: ${{ env.MYSQL_USERNAME }}
         MYSQL_PASSWORD: ${{ env.MYSQL_PASSWORD }}
+        DATABASE_NAME_GAME: ${{ env.DATABASE_NAME_GAME }}
         MICROSERVICE_GAME: ${{ env.MICROSERVICE_GAME }}
         MICROSERVICE_GAME_PASSWORD: ${{ env.MICROSERVICE_GAME_PASSWORD }}
         TOKEN_MICROSERVICE_GAME: ${{ env.TOKEN_MICROSERVICE_GAME }}
@@ -34,7 +35,7 @@ jobs:
       run: |
         echo "DB_HOST=$MYSQL_HOST" >> ./microservices/User/.env
         echo "DB_PORT=$MYSQL_PORT" >> ./microservices/User/.env
-        echo "DB_NAME=$MYSQL_USERNAME" >> ./microservices/User/.env
+        echo "DB_NAME=$DATABASE_NAME_USER" >> ./microservices/User/.env
         echo "DB_PASSWORD=$MYSQL_PASSWORD" >> ./microservices/User/.env
         echo "DB_USER=$MYSQL_USERNAME" >> ./microservices/User/.env
         echo "MICROSERVICE_USER=$MICROSERVICE_USER" >> ./microservices/User/.env
@@ -45,6 +46,7 @@ jobs:
         MYSQL_HOST: ${{ env.MYSQL_HOST }}
         MYSQL_PORT: ${{ env.MYSQL_PORT }}
         MYSQL_USERNAME: ${{ env.MYSQL_USERNAME }}
+        DATABASE_NAME_USER: ${{ env.DATABASE_NAME_USER }}
         MYSQL_PASSWORD: ${{ env.MYSQL_PASSWORD }}
         MICROSERVICE_USER: ${{ env.MICROSERVICE_USER }}
         MICROSERVICE_USER_PASSWORD: ${{ env.MICROSERVICE_USER_PASSWORD }}
@@ -52,5 +54,5 @@ jobs:
         MICROSERVICE_USER_URL: ${{ env.MICROSERVICE_USER_URL }}
 
     - name: Build the Docker image
-      run: 
-        echo ${{secrets.SUDO_PASSWORD}} | sudo -S bash ./docker-pro.sh
+      run:
+        echo ${{secrets.SSH_PRIVATE_KEY}} | sudo -S bash ./docker-pro.sh
