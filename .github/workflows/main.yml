@@ -55,4 +55,4 @@ jobs:
 
     - name: Build the Docker image
       run:
-        echo ${{secrets.SSH_PRIVATE_KEY}} | sudo -S bash ./run-pro.sh
+        echo ${{secrets.SSH_PRIVATE_KEY}} | sudo -S bash ./run-pro.sh 
