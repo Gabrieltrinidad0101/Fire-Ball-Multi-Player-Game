@@ -43,5 +43,7 @@ func GetConnection() *gorm.DB {
 		fmt.Errorf("Error %s", err.Error())
 		panic("ERROR IN THE CONNECTION")
 	}
+
+	fmt.Println("Connection to the database established")
 	return gormDB
 }
