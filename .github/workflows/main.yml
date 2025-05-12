@@ -16,8 +16,7 @@ jobs:
         echo "DB_NAME=$DATABASE_NAME_GAME" >> ./microservices/Game/.env
         echo "DB_PASSWORD=$MYSQL_PASSWORD" >> ./microservices/Game/.env
         echo "DB_USER=$MYSQL_USERNAME" >> ./microservices/Game/.env
-        echo "MICROSERVICE_GAME=$MICROSERVICE_GAME" >> ./microservices/Game/.env
-        echo "MICROSERVICE_GAME_PASSWORD=$MICROSERVICE_GAME_PASSWORD" >> ./microservices/Game/.env
+        TOKEN_MICROSERVICE: ${{secrets.TOKEN_MICROSERVICE}}
         echo "TOKEN_MICROSERVICE_GAME=$TOKEN_MICROSERVICE_GAME" >> ./microservices/Game/.env
         echo "MICROSERVICE_USER_URL=$MICROSERVICE_USER_URL" >> ./microservices/Game/.env
       env:
@@ -26,9 +25,6 @@ jobs:
         MYSQL_USERNAME: ${{secrets.MYSQL_USERNAME}}
         MYSQL_PASSWORD: ${{secrets.MYSQL_PASSWORD}}
         DATABASE_NAME_GAME: ${{secrets.DATABASE_NAME_GAME}}
-        MICROSERVICE_GAME: ${{secrets.MICROSERVICE_GAME}}
-        MICROSERVICE_GAME_PASSWORD: ${{secrets.MICROSERVICE_GAME_PASSWORD}}
-        TOKEN_MICROSERVICE_GAME: ${{secrets.TOKEN_MICROSERVICE_GAME}}
         MICROSERVICE_USER_URL: ${{secrets.MICROSERVICE_USER_URL}}
     
     - name: create .env file user 
@@ -38,9 +34,7 @@ jobs:
         echo "DB_NAME=$DATABASE_NAME_USER" >> ./microservices/User/.env
         echo "DB_PASSWORD=$MYSQL_PASSWORD" >> ./microservices/User/.env
         echo "DB_USER=$MYSQL_USERNAME" >> ./microservices/User/.env
-        echo "MICROSERVICE_USER=$MICROSERVICE_USER" >> ./microservices/User/.env
-        echo "MICROSERVICE_USER_PASSWORD=$MICROSERVICE_USER_PASSWORD" >> ./microservices/User/.env
-        echo "TOKEN_MICROSERVICE_USER=$TOKEN_MICROSERVICE_USER" >> ./microservices/User/.env
+        echo "TOKEN_MICROSERVICE=$TOKEN_MICROSERVICE" >> ./microservices/User/.env
         echo "MICROSERVICE_USER_URL=$MICROSERVICE_USER_URL" >> ./microservices/User/.env
       env:
         MYSQL_HOST: ${{secrets.MYSQL_HOST}}
@@ -48,9 +42,7 @@ jobs:
         MYSQL_USERNAME: ${{secrets.MYSQL_USERNAME}}
         DATABASE_NAME_USER: ${{secrets.DATABASE_NAME_USER}}
         MYSQL_PASSWORD: ${{secrets.MYSQL_PASSWORD}}
-        MICROSERVICE_USER: ${{secrets.MICROSERVICE_USER}}
-        MICROSERVICE_USER_PASSWORD: ${{secrets.MICROSERVICE_USER_PASSWORD}}
-        TOKEN_MICROSERVICE_USER: ${{secrets.TOKEN_MICROSERVICE_USER}}
+        TOKEN_MICROSERVICE: ${{secrets.TOKEN_MICROSERVICE}}
         MICROSERVICE_USER_URL: ${{secrets.MICROSERVICE_USER_URL}}
 
     - name: Build the Docker image

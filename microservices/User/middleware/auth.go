@@ -1,9 +1,7 @@
 package middleware
 
 import (
-	"encoding/base64"
 	"net/http"
-	"strings"
 	"user/services"
 	"user/utils"
 
@@ -57,20 +55,8 @@ func userAuth(ctx echo.Context, next echo.HandlerFunc) error {
 
 func microservicesAuth(ctx echo.Context, next echo.HandlerFunc) error {
 	tokenString := ctx.Request().Header.Get("x-token-microservice")
-	decodedBytes, _ := base64.StdEncoding.DecodeString(tokenString)
-	decodedString := string(decodedBytes)
-	authData := strings.Split(decodedString, ":")
-
-	if len(authData) != 2 {
-		return ctx.JSON(errorResponse.StatusCode, errorResponse)
-	}
-
-	microservices := utils.NewMicroservicesAuth()
-	access := microservices.VerifyAuthentication(&utils.Microservice{
-		Name:     authData[0],
-		Password: authData[1],
-	})
-	if !access {
+	conf := utils.LoadEnviroments()
+	if tokenString != conf.TokenMicroservice {
 		return ctx.JSON(errorResponse.StatusCode, errorResponse)
 	}
 	return next(ctx)
