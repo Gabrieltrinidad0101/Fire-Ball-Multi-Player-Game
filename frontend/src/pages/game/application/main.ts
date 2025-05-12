@@ -1,12 +1,12 @@
 import { Game } from "./game/game";
 import {RealTimeGame}  from "./realTime/realTime";
 
-export const StartGame = async (gameId: string): Promise<RealTimeGame> => {
+export const StartGame = (gameId: string): RealTimeGame => {
     const game = new Game()
     game.context()
     const realTime = new RealTimeGame(gameId)
     game.background = "backgroundBig.png"   
-    await game.render([
+    game.render([
         "backgroundBig.png",
         "player/player1.gif",
         "player/player2.gif",
