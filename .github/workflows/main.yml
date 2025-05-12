@@ -16,7 +16,7 @@ jobs:
         echo "DB_NAME=$DATABASE_NAME_GAME" >> ./microservices/Game/.env
         echo "DB_PASSWORD=$MYSQL_PASSWORD" >> ./microservices/Game/.env
         echo "DB_USER=$MYSQL_USERNAME" >> ./microservices/Game/.env
-        echo "TOKEN_MICROSERVICE_GAME=$TOKEN_MICROSERVICE_GAME" >> ./microservices/Game/.env
+        echo "TOKEN_MICROSERVICE=$TOKEN_MICROSERVICE" >> ./microservices/Game/.env
         echo "MICROSERVICE_USER_URL=$MICROSERVICE_USER_URL" >> ./microservices/Game/.env
       env:
         MYSQL_HOST: ${{secrets.MYSQL_HOST}}
