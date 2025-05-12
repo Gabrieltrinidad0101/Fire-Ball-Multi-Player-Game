@@ -27,31 +27,41 @@ export class Player extends GameObject {
         this.animation()
         if(!canMove) return;
         this.socket = socket
-        document.addEventListener("keydown",(e)=>{
-            if(this.isDead) return 
-            if(e.key == "a") {
-                this.moves.right = false 
-                this.moves.left = true 
-            }
-            if(e.key == "d") {
-                this.moves.right = true 
-                this.moves.left = false
-            }
-            if(e.key === "w") this.moves.up = true
-        })
+        document.querySelector(".left")?.addEventListener("keydown",_=>this.keyDown({key: "a"}))
+        document.querySelector(".right")?.addEventListener("keydown",_=>this.keyDown({key: "d"}))
+        document.querySelector(".up")?.addEventListener("keydown",_=>this.keyDown({key: "w"}))
+        document.querySelector(".left")?.addEventListener("keyup",_=>this.keyUp({key: "a"}))
+        document.querySelector(".right")?.addEventListener("keyup",_=>this.keyUp({key: "d"}))
+        document.querySelector(".up")?.addEventListener("keyup",_=>this.keyUp({key: "w"}))
+        document.querySelector(".enter")?.addEventListener("keyup",_=>this.keyUp({key: "Enter"}))
+        document.addEventListener("keydown",(e)=> this.keyDown(e))
+        document.addEventListener("keyup",(e)=> this.keyUp(e))
+    }
 
-        document.addEventListener("keyup",(e)=>{
-            if(this.isDead) return 
-            if(e.key === "Enter"){
-                this.bullet();
-                return
-            } 
-            if(e.key === "a") this.moves.left = false 
-            if(e.key === "d") this.moves.right = false
-            if(e.key === "w") this.moves.up = false
-            this.socket?.emit("stop player",{
-                id: this.id
-            })
+    keyDown = (e: {key: string})=>{
+        if(this.isDead) return 
+        if(e.key == "a") {
+            this.moves.right = false 
+            this.moves.left = true 
+        }
+        if(e.key == "d") {
+            this.moves.right = true 
+            this.moves.left = false
+        }
+        if(e.key === "w") this.moves.up = true
+    }
+
+    keyUp = (e: {key: string})=>{
+        if(this.isDead) return 
+        if(e.key === "Enter"){
+            this.bullet();
+            return
+        } 
+        if(e.key === "a") this.moves.left = false 
+        if(e.key === "d") this.moves.right = false
+        if(e.key === "w") this.moves.up = false
+        this.socket?.emit("stop player",{
+            id: this.id
         })
     }
 

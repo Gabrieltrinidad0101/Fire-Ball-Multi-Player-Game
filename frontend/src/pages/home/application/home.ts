@@ -1,8 +1,8 @@
 import APIURL from "../../../share/application/Api";
 import { isNullEmptyUndefinedOrNan } from "../../../share/application/isNullEmptyUndifinedOrNan";
-import ICustomFecth from "../../../share/domian/customFecth";
-import IGame from "../../../share/domian/game";
-import IUser from "../../../share/domian/player";
+import ICustomFecth from "../../../share/domain/customFecth";
+import IGame from "../../../share/domain/game";
+import IUser from "../../../share/domain/player";
 
 export class HomeApp{
     constructor(private readonly customFetch: ICustomFecth){}

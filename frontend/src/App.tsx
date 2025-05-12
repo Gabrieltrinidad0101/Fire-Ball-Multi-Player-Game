@@ -1,12 +1,13 @@
 import Auth from "./pages/auth/insfranstructure/Auth"
 import Home from "./pages/home/insfranstructure/Home.tsx"
 import Game from "./pages/game/insfratructure/Game"
-import { ToastContainer } from "react-toastify"
+import { ToastContainer,toast } from "react-toastify"
 import Loading from './components/loading/Loading.tsx'
 import { AuthenticationProvider } from "./share/insfranstructure/AuthenticationContext.tsx"
 import { HashRouter, Route, Routes } from 'react-router-dom';
 
 function App() {
+  (window as any).toast = toast
   return (
     <>
         <HashRouter>

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import Background from '../../../components/Background'
 import HomeCss from './Home.module.css'
-import IUser from '../../../share/domian/player'
+import IUser from '../../../share/domain/player'
 import { homeApp } from './dependencies'
-import IGame from '../../../share/domian/game'
+import IGame from '../../../share/domain/game'
 import { useNavigate } from 'react-router-dom'
 export default function Home() {
   const [players, setPlayers] = useState<Array<IUser>>([])

@@ -82,7 +82,6 @@ export class Game {
       if (object.image === undefined) return;
       const imageElement = imagesElement.get(object.image);
       if (imageElement === undefined) return;
-      console.log(imageElement);
       this.drawImage(Game.context, imageElement, object);
     }
     window.requestAnimationFrame(() => this.#render(imagesElement));

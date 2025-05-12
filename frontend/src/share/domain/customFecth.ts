@@ -1,5 +1,5 @@
-import type BaseHttp from '../../share/domian/baseHttp'
-import { TMicroservice } from '../../share/domian/baseHttp'
+import type BaseHttp from '../../share/domain/baseHttp'
+import { TMicroservice } from '../../share/domain/baseHttp'
 import type IToast from './IToast'
 
 interface IHttpResult<T>{
@@ -18,7 +18,7 @@ export default interface ICustomFecth {
 
 export interface IOptionsFetch {
   showLoader?: boolean
-  showErrors?: boolean
+  notShowErrors?: boolean
 }
 
 export interface IFecthAlert {

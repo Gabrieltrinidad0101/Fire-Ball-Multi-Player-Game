@@ -1,11 +1,12 @@
 import axios, { AxiosError, AxiosInstance } from 'axios'
-import type BaseHttp from '../domian/baseHttp'
+import type BaseHttp from '../domain/baseHttp'
 import { Toast} from './dependencies'
-import ICustomFecth, { type IOptionsFetch } from '../domian/customFecth'
+import ICustomFecth, { type IOptionsFetch } from '../domain/customFecth'
 import LoaderAnimation from './loaderAnimation'
 import { constants } from '../application/constants'
-import { TMicroservice } from '../domian/baseHttp'
-import IHttpResult from '../domian/httpResult'
+import { TMicroservice } from '../domain/baseHttp'
+import IHttpResult from '../domain/httpResult'
+import { toast } from 'react-toastify'
 
 export class CustomFecth implements ICustomFecth  {
   private readonly errorMsg: string = 'Internal error try later'
@@ -84,15 +85,16 @@ export class CustomFecth implements ICustomFecth  {
       loaderAnimation.hide()
       return result.data as IHttpResult<T>
     } catch (error: unknown) {
-      console.error(error)
+      console.log(error)
       loaderAnimation.hide()
-      if (!baseHttp.optionsFetch?.showErrors) return
+      if (baseHttp.optionsFetch?.notShowErrors) return
       if (error instanceof AxiosError) {
         const response = error.response
         const errorMsg = response?.data?.message ?? this.errorMsg
-        Toast.error(errorMsg)
+        toast.error(errorMsg)
         return
       }
+      console.log("klkl")
       Toast.error(this.errorMsg)
     }
   }

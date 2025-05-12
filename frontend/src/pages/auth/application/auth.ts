@@ -1,7 +1,7 @@
-import type IPlayer from '../../../share/domian/player'
+import type IPlayer from '../../../share/domain/player'
 import APIURL from '../../../share/application/Api'
-import ICustomFecth from '../../../share/domian/customFecth'
-import IToast from '../../../share/domian/IToast'
+import ICustomFecth from '../../../share/domain/customFecth'
+import IToast from '../../../share/domain/IToast'
 
 const Authentication = async (player: IPlayer,customFecth: ICustomFecth,toast: IToast,auth: boolean, navigation: () => void): Promise<void> => {
   try {

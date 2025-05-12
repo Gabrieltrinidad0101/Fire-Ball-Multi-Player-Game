@@ -67,7 +67,7 @@ export default function Game(): JSX.Element {
     };
 
     realTimeGame.onWin = () => {
-      Toast.sucess("Winner");
+      Toast.success("Winner");
       window.removeEventListener("beforeunload", question);
       navigate("/home");
     };

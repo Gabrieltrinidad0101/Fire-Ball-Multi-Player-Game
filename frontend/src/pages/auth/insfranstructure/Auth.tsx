@@ -1,7 +1,7 @@
 import { ChangeEvent, useState } from 'react'
 import Background from '../../../components/Background'
 import AuthCss from './Auth.module.css'
-import IPlayer from '../../../share/domian/player'
+import IPlayer from '../../../share/domain/player'
 import { Authentication } from '../application/auth'
 import { Toast, customFecth } from '../../../share/insfranstructure/dependencies'
 import {  Link, useNavigate } from 'react-router-dom'
@@ -19,7 +19,6 @@ export default function Auth({auth}: {auth: boolean}) {
 
   const onClick = (e: React.MouseEvent<HTMLInputElement>)=>{
     e.preventDefault()
-    console.log(player)
     Authentication(player,customFecth,Toast,auth, redirect)
   }
 

@@ -1,4 +1,4 @@
 export default interface IToast {
-  sucess: (texto: string) => void
+  success: (texto: string) => void
   error: (texto: string) => void
 }
