@@ -16,7 +16,6 @@ jobs:
         echo "DB_NAME=$DATABASE_NAME_GAME" >> ./microservices/Game/.env
         echo "DB_PASSWORD=$MYSQL_PASSWORD" >> ./microservices/Game/.env
         echo "DB_USER=$MYSQL_USERNAME" >> ./microservices/Game/.env
-        TOKEN_MICROSERVICE: ${{secrets.TOKEN_MICROSERVICE}}
         echo "TOKEN_MICROSERVICE_GAME=$TOKEN_MICROSERVICE_GAME" >> ./microservices/Game/.env
         echo "MICROSERVICE_USER_URL=$MICROSERVICE_USER_URL" >> ./microservices/Game/.env
       env:
@@ -26,6 +25,7 @@ jobs:
         MYSQL_PASSWORD: ${{secrets.MYSQL_PASSWORD}}
         DATABASE_NAME_GAME: ${{secrets.DATABASE_NAME_GAME}}
         MICROSERVICE_USER_URL: ${{secrets.MICROSERVICE_USER_URL}}
+        TOKEN_MICROSERVICE: ${{secrets.TOKEN_MICROSERVICE}}
     
     - name: create .env file user 
       run: |
@@ -43,7 +43,6 @@ jobs:
         DATABASE_NAME_USER: ${{secrets.DATABASE_NAME_USER}}
         MYSQL_PASSWORD: ${{secrets.MYSQL_PASSWORD}}
         TOKEN_MICROSERVICE: ${{secrets.TOKEN_MICROSERVICE}}
-        MICROSERVICE_USER_URL: ${{secrets.MICROSERVICE_USER_URL}}
 
     - name: Build the Docker image
       run:
