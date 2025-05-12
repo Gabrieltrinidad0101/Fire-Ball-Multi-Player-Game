@@ -31,8 +31,7 @@ export default function Game(): JSX.Element {
       return
     }
 
-
-    realTimeGame = StartGame(gameId)
+    realTimeGame = await StartGame(gameId)
 
     realTimeGame.onTotal((total: number) => {
       setTotalPlayers(total)
